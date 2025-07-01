@@ -1,0 +1,113 @@
+﻿@model SistemaControleDeEstoque.Models.Produto
+
+@{
+    ViewData["Title"] = "Detalhes do Produto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Cabeçalho -->
+    <div class="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4 rounded-t-lg shadow-md">
+        <div class="flex items-center">
+            <svg class="h-8 w-8 text-slate-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m-8-4l8 4m8 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <h1 class="ml-3 text-2xl font-bold text-slate-100">Detalhes do Produto</h1>
+        </div>
+    </div>
+
+    <!-- Conteúdo dos detalhes -->
+    <div class="bg-white shadow-lg rounded-b-lg p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Campo: Nome -->
+            <div class="bg-slate-50 p-4 rounded-md">
+                <h3 class="text-xs font-medium text-slate-600 uppercase tracking-wider mb-1">
+                    @Html.DisplayNameFor(model => model.Nome)
+                </h3>
+                <p class="text-base text-slate-900 font-medium">
+                    @Html.DisplayFor(model => model.Nome)
+                </p>
+            </div>
+
+            <!-- Campo: Tipo -->
+            <div class="bg-slate-50 p-4 rounded-md">
+                <h3 class="text-xs font-medium text-slate-600 uppercase tracking-wider mb-1">
+                    @Html.DisplayNameFor(model => model.Tipo)
+                </h3>
+                <p class="text-base text-slate-900 font-medium">
+                    @Html.DisplayFor(model => model.Tipo)
+                </p>
+            </div>
+
+            <!-- Campo: Quantidade -->
+            <div class="bg-slate-50 p-4 rounded-md">
+                <h3 class="text-xs font-medium text-slate-600 uppercase tracking-wider mb-1">
+                    @Html.DisplayNameFor(model => model.Quantidade)
+                </h3>
+                <p class="text-base text-slate-900 font-medium">
+                    @Html.DisplayFor(model => model.Quantidade) unidade(s)
+                </p>
+            </div>
+
+            <!-- Campo: Valor -->
+            <div class="bg-slate-50 p-4 rounded-md">
+                <h3 class="text-xs font-medium text-slate-600 uppercase tracking-wider mb-1">
+                    @Html.DisplayNameFor(model => model.Valor)
+                </h3>
+                <p class="text-base text-slate-900 font-medium">
+                    @Model.Valor.ToString("C", new System.Globalization.CultureInfo("pt-BR"))
+                </p>
+            </div>
+
+            <!-- Campo: Valor Total em Estoque -->
+            <div class="bg-slate-50 p-4 rounded-md">
+                <h3 class="text-xs font-medium text-slate-600 uppercase tracking-wider mb-1">
+                    Valor Total em Estoque
+                </h3>
+                <p class="text-base text-slate-900 font-medium">
+                    @{
+                        var valorTotal = Model.Quantidade * Model.Valor;
+                        @valorTotal.ToString("C", new System.Globalization.CultureInfo("pt-BR"))
+                    }
+                </p>
+            </div>
+
+            <!-- Campo: Fornecedor -->
+            <div class="bg-slate-50 p-4 rounded-md">
+                <h3 class="text-xs font-medium text-slate-600 uppercase tracking-wider mb-1">
+                    @Html.DisplayNameFor(model => model.Fornecedor)
+                </h3>
+                <p class="text-base text-slate-900 font-medium">
+                    @if (Model?.Fornecedor != null)
+                    {
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                            @Model.Fornecedor.Nome
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            Não cadastrado
+                        </span>
+                    }
+                </p>
+            </div>
+        </div>
+
+        <!-- Botões de ação -->
+        <div class="flex justify-between mt-8">
+            <a asp-action="Index" class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-800 bg-white hover:bg-slate-50 shadow-sm">
+                <svg class="-ml-1 mr-2 h-5 w-5 text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Voltar para a Lista
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
+                <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Editar
+            </a>
+        </div>
+    </div>
+</div>

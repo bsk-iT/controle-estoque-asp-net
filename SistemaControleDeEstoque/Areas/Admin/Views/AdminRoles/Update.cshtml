@@ -1,0 +1,129 @@
+﻿@model RoleEdit
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Cabeçalho -->
+    <div class="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4 rounded-t-lg shadow-md">
+        <div class="flex items-center">
+            <svg class="h-8 w-8 text-slate-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            <h1 class="ml-3 text-2xl font-bold text-slate-100">Gerenciar Perfil: @(Model.Role?.Name ?? "Perfil não especificado")</h1>
+        </div>
+    </div>
+
+    <div class="bg-white shadow-md rounded-b-lg p-6">
+        <!-- Mensagens de validação -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="All" class="mb-6 text-sm text-red-600 p-4 bg-red-50 border border-red-200 rounded" role="alert"></div>
+        }
+
+        <form method="post" class="space-y-8">
+            <input type="hidden" name="roleName" value="@Model.Role?.Name ?? string.Empty" />
+            <input type="hidden" name="roleId" value="@Model.Role?.Id ?? string.Empty" />
+
+            <!-- Adicionar usuários ao perfil -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="px-4 py-5 sm:px-6 bg-gradient-to-r from-green-500 to-green-600">
+                    <h2 class="text-xl font-semibold text-white">Adicionar usuários ao perfil</h2>
+                </div>
+                <div class="border-t border-gray-200">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">Usuário</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">Adicionar</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-slate-100">
+                                @if (Model.NonMembers?.Count() == 0)
+                                {
+                                    <tr>
+                                        <td colspan="2" class="px-6 py-4 text-sm text-gray-500 text-center">Todos os usuários já pertencem a este perfil</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (IdentityUser user in Model.NonMembers!)
+                                    {
+                                        <tr>
+                                            <td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900">@user.UserName</td>
+                                            <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                <label class="inline-flex items-center">
+                                                    <input type="checkbox" name="AddIds" value="@user.Id"
+                                                           class="form-checkbox h-5 w-5 text-slate-600 rounded border-gray-300 focus:ring-slate-500">
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Remover usuários do perfil -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="px-4 py-5 sm:px-6 bg-gradient-to-r from-red-500 to-red-600">
+                    <h2 class="text-xl font-semibold text-white">Remover usuários do perfil</h2>
+                </div>
+                <div class="border-t border-gray-200">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">Usuário</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">Remover</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-slate-100">
+                                @if (Model.Members?.Count() == 0)
+                                {
+                                    <tr>
+                                        <td colspan="2" class="px-6 py-4 text-sm text-gray-500 text-center">Não existem usuários neste perfil</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (IdentityUser user in Model.Members!)
+                                    {
+                                        <tr>
+                                            <td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900">@user.UserName</td>
+                                            <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
+                                                <label class="inline-flex items-center">
+                                                    <input type="checkbox" name="DeleteIds" value="@user.Id"
+                                                           class="form-checkbox h-5 w-5 text-red-600 rounded border-gray-300 focus:ring-red-500">
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de ação -->
+            <div class="flex items-center justify-between pt-6">
+                <a asp-action="Index"
+                   class="inline-flex items-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-800 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
+                    <svg class="-ml-1 mr-2 h-5 w-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Voltar
+                </a>
+
+                <button type="submit"
+                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
+                    <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

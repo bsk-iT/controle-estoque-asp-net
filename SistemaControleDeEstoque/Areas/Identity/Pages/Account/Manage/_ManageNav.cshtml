@@ -1,0 +1,32 @@
+﻿@inject SignInManager<IdentityUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+<div class="bg-white shadow rounded-lg divide-y divide-slate-200">
+    <div class="p-4">
+        <h2 class="text-lg font-medium text-slate-900">Conta</h2>
+    </div>
+    <ul class="py-2">
+        <li>
+            <a asp-page="./Index" class="@ManageNavPages.IndexNavClass(ViewContext) block px-4 py-2 text-sm text-gray-700 hover:bg-slate-50">Perfil</a>
+        </li>
+        <li>
+            <a asp-page="./Email" class="@ManageNavPages.EmailNavClass(ViewContext) block px-4 py-2 text-sm text-gray-700 hover:bg-slate-50">Email</a>
+        </li>
+        <li>
+            <a asp-page="./ChangePassword" class="@ManageNavPages.ChangePasswordNavClass(ViewContext) block px-4 py-2 text-sm text-gray-700 hover:bg-slate-50">Senha</a>
+        </li>
+        @if (hasExternalLogins)
+        {
+            <li>
+                <a asp-page="./ExternalLogins" class="@ManageNavPages.ExternalLoginsNavClass(ViewContext) block px-4 py-2 text-sm text-gray-700 hover:bg-slate-50">Logins externos</a>
+            </li>
+        }
+        <li>
+            <a asp-page="./TwoFactorAuthentication" class="@ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext) block px-4 py-2 text-sm text-gray-700 hover:bg-slate-50">Autenticação em dois fatores</a>
+        </li>
+        <li>
+            <a asp-page="./PersonalData" class="@ManageNavPages.PersonalDataNavClass(ViewContext) block px-4 py-2 text-sm text-gray-700 hover:bg-slate-50">Dados pessoais</a>
+        </li>
+    </ul>
+</div>

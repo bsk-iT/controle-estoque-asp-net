@@ -1,0 +1,181 @@
+﻿@model SistemaControleDeEstoque.Models.Relatorio
+
+@{
+    ViewData["Title"] = "Novo Relatório";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Cabeçalho -->
+    <div class="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4 rounded-t-lg shadow-md">
+        <div class="flex items-center">
+            <svg class="h-8 w-8 text-slate-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h1 class="ml-3 text-2xl font-bold text-slate-100">Gerar Novo Relatório</h1>
+        </div>
+    </div>
+
+    <!-- Conteúdo do formulário -->
+    <div class="bg-white shadow-lg rounded-b-lg p-8">
+        <div class="max-w-2xl mx-auto">
+            <form asp-action="Create" method="post" class="space-y-6">
+                <!-- Validação -->
+                <div asp-validation-summary="ModelOnly" class="text-sm text-red-600 p-2 bg-red-50 border border-red-200 rounded" role="alert"></div>
+
+                <!-- Grid de campos -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Tipo -->
+                    <div>
+                        <label asp-for="Tipo" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Relatório</label>
+                        <select asp-for="Tipo" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500">
+                            <option value="">Selecione o tipo...</option>
+                            <option value="@SistemaControleDeEstoque.Models.TipoRelatorio.Estoque">Inventário de Estoque</option>
+                            <option value="@SistemaControleDeEstoque.Models.TipoRelatorio.Movimentacoes">Movimentações</option>
+                        </select>
+                        <span asp-validation-for="Tipo" class="text-sm text-red-600"></span>
+                    </div>
+
+                    <!-- Data de Geração -->
+                    <div>
+                        <label asp-for="DataGeracao" class="block text-sm font-medium text-gray-700 mb-1">Data de Geração</label>
+                        <input asp-for="DataGeracao" type="datetime-local" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
+                        <span asp-validation-for="DataGeracao" class="text-sm text-red-600"></span>
+                    </div>
+
+                    <!-- Usuário Gerador (somente leitura) -->
+                    <div class="md:col-span-2">
+                        <label asp-for="UsuarioGerador" class="block text-sm font-medium text-gray-700 mb-1">Responsável pela Geração</label>
+                        <div class="flex items-center px-3 py-2 border border-gray-300 rounded-md bg-slate-50">
+                            <svg class="h-5 w-5 text-slate-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span class="text-sm text-gray-700">@Model.UsuarioGerador</span>
+                        </div>
+                        <input asp-for="UsuarioGerador" type="hidden" />
+                        <p class="mt-1 text-xs text-slate-600">O responsável pela geração é o usuário logado no sistema.</p>
+                    </div>
+                </div>
+
+                <!-- Seção de parâmetros adicionais -->
+                <div class="mt-4 p-4 bg-slate-50 rounded-md border border-slate-200">
+                    <h3 class="text-sm font-medium text-slate-800 mb-2">Parâmetros do Relatório</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label asp-for="DataInicio" class="block text-sm font-medium text-slate-600 mb-1">Data Inicial</label>
+                            <input asp-for="DataInicio" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
+                            <span asp-validation-for="DataInicio" class="text-sm text-red-600"></span>
+                            <p class="mt-1 text-xs text-slate-600">Se não informada, será considerado desde o início do sistema</p>
+                        </div>
+                        <div>
+                            <label asp-for="DataFim" class="block text-sm font-medium text-slate-600 mb-1">Data Final</label>
+                            <input asp-for="DataFim" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
+                            <span asp-validation-for="DataFim" class="text-sm text-red-600"></span>
+                            <p class="mt-1 text-xs text-slate-600">Se não informada, será considerada a data atual</p>
+                        </div>
+                    </div>
+
+                    <!-- Parâmetros específicos para relatório de estoque -->
+                    <div id="parametros-estoque" class="mt-4 pt-4 border-t border-slate-200">
+                        <h4 class="text-sm font-medium text-slate-800 mb-2">Opções de Inventário</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex items-center">
+                                    <input asp-for="IncluirProdutosZerados" type="checkbox" class="h-4 w-4 text-slate-600 focus:ring-slate-500 border-gray-300 rounded">
+                                    <label asp-for="IncluirProdutosZerados" class="ml-2 block text-sm text-gray-700">Incluir produtos com estoque zerado</label>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center">
+                                    <input asp-for="ApenasAbaixoDoMinimo" type="checkbox" class="h-4 w-4 text-slate-600 focus:ring-slate-500 border-gray-300 rounded">
+                                    <label asp-for="ApenasAbaixoDoMinimo" class="ml-2 block text-sm text-gray-700">Apenas produtos abaixo do estoque mínimo</label>
+                                </div>
+                            </div>
+                            <div>
+                                <label asp-for="Ordenacao" class="block text-sm font-medium text-slate-600 mb-1">Ordenar por</label>
+                                <select asp-for="Ordenacao" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500">
+                                    <option value="@SistemaControleDeEstoque.Models.OrdenacaoRelatorio.NomeProduto">Nome do Produto</option>
+                                    <option value="@SistemaControleDeEstoque.Models.OrdenacaoRelatorio.Quantidade">Quantidade</option>
+                                    <option value="@SistemaControleDeEstoque.Models.OrdenacaoRelatorio.Valor">Valor</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Parâmetros específicos para relatório de movimentações -->
+                    <div id="parametros-movimentacoes" class="mt-4 pt-4 border-t border-slate-200">
+                        <h4 class="text-sm font-medium text-slate-800 mb-2">Opções de Movimentações</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label asp-for="TipoMovimentacao" class="block text-sm font-medium text-slate-600 mb-1">Tipo de Movimentação</label>
+                                <select asp-for="TipoMovimentacao" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500">
+                                    <option value="@SistemaControleDeEstoque.Models.TipoMovimentacao.Todas">Todas</option>
+                                    <option value="@SistemaControleDeEstoque.Models.TipoMovimentacao.Entradas">Entradas</option>
+                                    <option value="@SistemaControleDeEstoque.Models.TipoMovimentacao.Saidas">Saídas</option>
+                                </select>
+                            </div>
+                            <div>
+                                <div class="flex items-center">
+                                    <input asp-for="Resumido" type="checkbox" class="h-4 w-4 text-slate-600 focus:ring-slate-500 border-gray-300 rounded">
+                                    <label asp-for="Resumido" class="ml-2 block text-sm text-gray-700">Visualização resumida (agrupada por produto)</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botões -->
+                <div class="flex justify-between pt-4">
+                    <a asp-action="Index" class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-800 bg-white hover:bg-slate-50">
+                        <svg class="-ml-1 mr-2 h-5 w-5 text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Voltar
+                    </a>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Gerar Relatório
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tipoSelect = document.getElementById('Tipo');
+            const parametrosEstoque = document.getElementById('parametros-estoque');
+            const parametrosMovimentacoes = document.getElementById('parametros-movimentacoes');
+
+            // Função para mostrar/ocultar parâmetros conforme o tipo selecionado
+            function atualizarParametros() {
+                const tipo = tipoSelect.value;
+
+                if (tipo === '@((int)SistemaControleDeEstoque.Models.TipoRelatorio.Estoque)') {
+                    parametrosEstoque.style.display = 'block';
+                    parametrosMovimentacoes.style.display = 'none';
+                }
+                else if (tipo === '@((int)SistemaControleDeEstoque.Models.TipoRelatorio.Movimentacoes)') {
+                    parametrosEstoque.style.display = 'none';
+                    parametrosMovimentacoes.style.display = 'block';
+                }
+                else {
+                    parametrosEstoque.style.display = 'none';
+                    parametrosMovimentacoes.style.display = 'none';
+                }
+            }
+
+            // Executar no carregamento e quando o tipo mudar
+            tipoSelect.addEventListener('change', atualizarParametros);
+            atualizarParametros();
+        });
+    </script>
+}

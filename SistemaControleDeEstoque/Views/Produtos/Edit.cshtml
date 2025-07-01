@@ -1,0 +1,217 @@
+﻿@model SistemaControleDeEstoque.Models.Produto
+
+@{
+    ViewData["Title"] = "Editar Produto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var fornecedoresDisponiveis = ViewBag.FornecedoresDisponiveis as List<SistemaControleDeEstoque.Models.Fornecedor>;
+    var produtoFornecedores = ViewBag.ProdutoFornecedores as List<SistemaControleDeEstoque.Models.ProdutoFornecedor>;
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Cabeçalho -->
+    <div class="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4 rounded-t-lg shadow-md">
+        <h1 class="text-2xl font-bold text-slate-100">Editar Produto</h1>
+    </div>
+
+    <div class="bg-white shadow-md rounded-b-lg p-6">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-red-500 mb-4 p-3 bg-red-50 rounded-md" role="alert"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Nome -->
+                <div>
+                    <label asp-for="Nome" class="block text-sm font-medium text-gray-700 mb-1"></label>
+                    <input asp-for="Nome" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
+                    <span asp-validation-for="Nome" class="text-sm text-red-600"></span>
+                </div>
+
+                <!-- Tipo -->
+                <div>
+                    <label asp-for="Tipo" class="block text-sm font-medium text-gray-700 mb-1"></label>
+                    <input asp-for="Tipo" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
+                    <span asp-validation-for="Tipo" class="text-sm text-red-600"></span>
+                </div>
+
+                <!-- Quantidade -->
+                <div>
+                    <label asp-for="Quantidade" class="block text-sm font-medium text-gray-700 mb-1"></label>
+                    <input asp-for="Quantidade" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
+                    <span asp-validation-for="Quantidade" class="text-sm text-red-600"></span>
+                </div>
+
+                <!-- Valor -->
+                <div>
+                    <label asp-for="Valor" class="block text-sm font-medium text-gray-700 mb-1"></label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">R$</span>
+                        </div>
+                        <input asp-for="Valor" class="w-full pl-12 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
+                    </div>
+                    <span asp-validation-for="Valor" class="text-sm text-red-600"></span>
+                </div>
+
+                <!-- Fornecedor Principal -->
+                <div>
+                    <label asp-for="FornecedorId" class="block text-sm font-medium text-gray-700 mb-1">Fornecedor Principal</label>
+                    <select asp-for="FornecedorId" asp-items="ViewBag.FornecedorId" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500">
+                        <option value="">-- Selecione um fornecedor principal --</option>
+                    </select>
+                    <span asp-validation-for="FornecedorId" class="text-sm text-red-600"></span>
+                </div>
+            </div>
+
+            <!-- Fornecedores Adicionais -->
+            <div class="mt-8">
+                <h3 class="text-lg font-medium text-slate-900 mb-3">Fornecedores Adicionais</h3>
+                <div class="bg-slate-50 p-4 rounded-md border border-slate-200">
+
+                    <!-- Fornecedores já associados -->
+                    <div class="mb-4">
+                        <h4 class="text-sm font-medium text-slate-800 mb-2">Fornecedores associados a este produto:</h4>
+
+                        @if (produtoFornecedores != null && produtoFornecedores.Any())
+                        {
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                @foreach (var pf in produtoFornecedores)
+                                {
+                                    <div class="flex items-center justify-between bg-white px-3 py-2 rounded-md border border-slate-200">
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-900">@pf.Fornecedor.Nome</span>
+                                            <p class="text-xs text-gray-500">CNPJ: @pf.Fornecedor.CNPJ</p>
+                                        </div>
+                                        <a href="#"
+                                           class="text-red-600 hover:text-red-800"
+                                           onclick="removeFornecedor(@pf.Id); return false;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-sm text-gray-500">Nenhum fornecedor adicional associado a este produto.</p>
+                        }
+                    </div>
+
+                    <!-- Adicionar novo fornecedor -->
+                    <div class="border-t border-slate-200 pt-4 mt-4">
+                        <h4 class="text-sm font-medium text-slate-800 mb-2">Adicionar novo fornecedor:</h4>
+
+                        <div class="flex items-center space-x-2">
+                            <select id="novoFornecedor" class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500">
+                                <option value="">-- Selecione um fornecedor --</option>
+                                @if (fornecedoresDisponiveis != null)
+                                {
+                                    @foreach (var fornecedor in fornecedoresDisponiveis)
+                                    {
+                                        <option value="@fornecedor.Id">@fornecedor.Nome</option>
+                                    }
+                                }
+                            </select>
+                            <button type="button"
+                                    onclick="adicionarFornecedor()"
+                                    class="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
+                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões -->
+            <div class="flex justify-between mt-8">
+                <a asp-action="Index" class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-800 bg-white hover:bg-slate-50">
+                    <svg class="-ml-1 mr-2 h-5 w-5 text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Voltar
+                </a>
+
+                <button type="submit" class="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
+                    <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Salvar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function adicionarFornecedor() {
+            const fornecedorId = document.getElementById('novoFornecedor').value;
+            const produtoId = @Model.Id;
+
+            if (!fornecedorId) {
+                alert('Por favor, selecione um fornecedor para adicionar.');
+                return;
+            }
+
+            // Chamada AJAX para adicionar o fornecedor
+            fetch(`/api/ProdutosFornecedores`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({
+                    produtoId: produtoId,
+                    fornecedorId: fornecedorId
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao adicionar fornecedor');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Recarregar a página para mostrar a atualização
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Ocorreu um erro ao adicionar o fornecedor. Tente novamente.');
+            });
+        }
+
+        function removeFornecedor(produtoFornecedorId) {
+            if (!confirm('Tem certeza que deseja remover este fornecedor?')) {
+                return;
+            }
+
+            // Chamada AJAX para remover o fornecedor
+            fetch(`/api/ProdutosFornecedores/${produtoFornecedorId}`, {
+                method: 'DELETE',
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao remover fornecedor');
+                }
+
+                // Recarregar a página para mostrar a atualização
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Ocorreu um erro ao remover o fornecedor. Tente novamente.');
+            });
+        }
+    </script>
+}

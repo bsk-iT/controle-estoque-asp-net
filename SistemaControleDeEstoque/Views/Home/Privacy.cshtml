@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Política de Privacidade";
+}
+
+<div class="bg-white shadow-md rounded-lg overflow-hidden max-w-4xl mx-auto">
+    <div class="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4">
+        <h1 class="text-3xl font-bold text-slate-100">@ViewData["Title"]</h1>
+    </div>
+
+    <div class="p-6 space-y-6">
+        <div class="prose prose-slate max-w-none">
+            <h2 class="text-2xl font-semibold text-slate-900">Sua privacidade é importante para nós</h2>
+
+            <p class="text-gray-600 leading-relaxed mt-4">
+                É política do Sistema de Controle de Estoque respeitar sua privacidade em relação a
+                qualquer informação sua que possamos coletar em nosso sistema e outros sites que possuímos e operamos.
+            </p>
+
+            <h3 class="text-xl font-semibold text-slate-800 mt-6">Informações que coletamos</h3>
+
+            <div class="bg-slate-50 rounded-md p-4 border-l-4 border-slate-500 mt-3">
+                <p class="text-slate-700">
+                    Solicitamos informações pessoais apenas quando realmente precisamos delas para lhe fornecer
+                    um serviço. Fazemo-lo por meios justos e legais, com o seu conhecimento e consentimento.
+                </p>
+            </div>
+
+            <h3 class="text-xl font-semibold text-slate-800 mt-6">Como usamos suas informações</h3>
+
+            <ul class="list-disc pl-6 space-y-2 mt-3 text-gray-600">
+                <li>Fornecer, operar e manter nosso sistema</li>
+                <li>Melhorar, personalizar e expandir nosso sistema</li>
+                <li>Entender e analisar como você usa nosso sistema</li>
+                <li>Desenvolver novos produtos, serviços, recursos e funcionalidades</li>
+            </ul>
+
+            <h3 class="text-xl font-semibold text-slate-800 mt-6">Segurança de Dados</h3>
+
+            <div class="bg-green-50 rounded-md p-4 border-l-4 border-green-500 mt-3">
+                <p class="text-gray-600">
+                    A segurança de seus dados é importante para nós, mas lembre-se que nenhum método de transmissão
+                    pela Internet ou método de armazenamento eletrônico é 100% seguro. Embora nos esforcemos para usar
+                    meios comercialmente aceitáveis para proteger seus dados pessoais, não podemos garantir sua segurança absoluta.
+                </p>
+            </div>
+
+            <h3 class="text-xl font-semibold text-slate-800 mt-6">Contato</h3>
+
+            <p class="text-gray-600 leading-relaxed mt-3">
+                Se você tiver alguma dúvida sobre como tratamos os dados do usuário e informações pessoais,
+                entre em contato conosco.
+            </p>
+
+            <!-- Notificação de atualização de política dentro do conteúdo (como estava originalmente) -->
+            <div class="mt-8 p-4 bg-slate-50 rounded-lg border border-slate-200 flex items-center">
+                <svg class="h-6 w-6 text-slate-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-sm text-slate-800">
+                    Esta política de privacidade foi atualizada pela última vez em @DateTime.Now.Year.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

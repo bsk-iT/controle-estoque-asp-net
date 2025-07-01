@@ -1,0 +1,115 @@
+﻿@model SistemaControleDeEstoque.Models.Relatorio
+
+@{
+    ViewData["Title"] = "Detalhes do Relatório";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Cabeçalho -->
+    <div class="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4 rounded-t-lg shadow-md">
+        <div class="flex items-center">
+            <svg class="h-8 w-8 text-slate-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h1 class="ml-3 text-2xl font-bold text-slate-100">Detalhes do Relatório</h1>
+        </div>
+    </div>
+
+    <!-- Conteúdo dos detalhes -->
+    <div class="bg-white shadow-lg rounded-b-lg p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Campo: Tipo -->
+            <div class="bg-slate-50 p-4 rounded-md">
+                <h3 class="text-xs font-medium text-slate-600 uppercase tracking-wider mb-1">
+                    @Html.DisplayNameFor(model => model.Tipo)
+                </h3>
+                <p class="text-base text-slate-900 font-medium">
+                    @{
+                        var tipoRelatorio = Model.Tipo.ToString().ToLower();
+                        if (tipoRelatorio.Contains("estoque") || tipoRelatorio == "estoque")
+                        {
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                                <svg class="-ml-0.5 mr-1 h-2 w-2 text-slate-600" fill="currentColor" viewBox="0 0 8 8">
+                                    <circle cx="4" cy="4" r="3" />
+                                </svg>
+                                Inventário de Estoque
+                            </span>
+                        }
+                        else if (tipoRelatorio.Contains("movimentacoes") || tipoRelatorio == "movimentacoes")
+                        {
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <svg class="-ml-0.5 mr-1 h-2 w-2 text-green-600" fill="currentColor" viewBox="0 0 8 8">
+                                    <circle cx="4" cy="4" r="3" />
+                                </svg>
+                                Movimentações
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                @Html.DisplayFor(model => model.Tipo)
+                            </span>
+                        }
+                    }
+                </p>
+            </div>
+
+            <!-- Campo: Data de Geração -->
+            <div class="bg-slate-50 p-4 rounded-md">
+                <h3 class="text-xs font-medium text-slate-600 uppercase tracking-wider mb-1">
+                    @Html.DisplayNameFor(model => model.DataGeracao)
+                </h3>
+                <p class="text-base text-slate-900 font-medium">
+                    @Model.DataGeracao.ToString("dd/MM/yyyy HH:mm")
+                </p>
+            </div>
+
+            <!-- Campo: Usuário Gerador -->
+            <div class="bg-slate-50 p-4 rounded-md md:col-span-2">
+                <h3 class="text-xs font-medium text-slate-600 uppercase tracking-wider mb-1">
+                    @Html.DisplayNameFor(model => model.UsuarioGerador)
+                </h3>
+                <p class="text-base text-slate-900 font-medium">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-800">
+                        @Html.DisplayFor(model => model.UsuarioGerador)
+                    </span>
+                </p>
+            </div>
+
+            <!-- Seção de visualização de dados (simulação) -->
+            <div class="bg-slate-50 p-4 rounded-md md:col-span-2">
+                <h3 class="text-sm font-medium text-slate-800 mb-2">Dados do Relatório</h3>
+                <div class="border border-slate-200 rounded-md p-4 bg-white">
+                    <div class="flex justify-center items-center">
+                        <div class="text-center text-sm text-slate-700 py-6">
+                            <svg class="mx-auto h-12 w-12 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p class="mt-1">Clique em "Visualizar Relatório" para acessar os dados completos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botões de ação -->
+        <div class="flex justify-between mt-8">
+            <a asp-action="Index" class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-800 bg-white hover:bg-slate-50 shadow-sm">
+                <svg class="-ml-1 mr-2 h-5 w-5 text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Voltar para a Lista
+            </a>
+            <div class="space-x-2">
+                <a asp-action="Visualizar" asp-route-id="@Model?.Id" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-700 hover:bg-slate-800">
+                    <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Visualizar Relatório
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

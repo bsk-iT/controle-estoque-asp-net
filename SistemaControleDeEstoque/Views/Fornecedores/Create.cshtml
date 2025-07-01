@@ -1,0 +1,108 @@
+﻿@model SistemaControleDeEstoque.Models.Fornecedor
+
+@{
+    ViewData["Title"] = "Novo Fornecedor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Cabeçalho -->
+    <div class="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4 rounded-t-lg shadow-md">
+        <div class="flex items-center">
+            <svg class="h-8 w-8 text-slate-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <h1 class="ml-3 text-2xl font-bold text-slate-100">Cadastrar Fornecedor</h1>
+        </div>
+    </div>
+
+    <!-- Conteúdo do formulário -->
+    <div class="bg-white shadow-lg rounded-b-lg p-8">
+        <div class="max-w-2xl mx-auto">
+            <form asp-action="Create" method="post" class="space-y-6">
+                <!-- Validação -->
+                <div asp-validation-summary="ModelOnly" class="text-sm text-red-600 p-2 bg-red-50 border border-red-200 rounded" role="alert"></div>
+
+                <!-- Grid de campos -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Nome -->
+                    <div>
+                        <label asp-for="Nome" class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+                        <input asp-for="Nome"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500"
+                               placeholder="Nome do fornecedor" />
+                        <span asp-validation-for="Nome" class="mt-1 text-sm text-red-600"></span>
+                    </div>
+
+                    <!-- CNPJ -->
+                    <div>
+                        <label asp-for="CNPJ" class="block text-sm font-medium text-gray-700 mb-1">CNPJ</label>
+                        <input asp-for="CNPJ"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500"
+                               placeholder="00.000.000/0000-00" />
+                        <span asp-validation-for="CNPJ" class="mt-1 text-sm text-red-600"></span>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label asp-for="Email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input asp-for="Email"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500"
+                               placeholder="fornecedor@empresa.com" />
+                        <span asp-validation-for="Email" class="mt-1 text-sm text-red-600"></span>
+                    </div>
+
+                    <!-- Telefone -->
+                    <div>
+                        <label asp-for="Telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+                        <input asp-for="Telefone"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500"
+                               placeholder="(00) 00000-0000" />
+                        <span asp-validation-for="Telefone" class="mt-1 text-sm text-red-600"></span>
+                    </div>
+                </div>
+
+                <!-- Informações adicionais -->
+                <div class="bg-slate-50 rounded-lg p-4 mt-4">
+                    <div class="flex items-center">
+                        <svg class="h-5 w-5 text-slate-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h4 class="text-md font-medium text-slate-800">Observação:</h4>
+                    </div>
+                    <p class="mt-2 text-sm text-slate-700">
+                        Os fornecedores cadastrados poderão ser associados aos produtos do sistema.
+                        Certifique-se de inserir dados válidos e completos.
+                    </p>
+                </div>
+
+                <!-- Botões -->
+                <div class="flex justify-between pt-5">
+                    <a asp-action="Index" class="inline-flex items-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-800 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5 text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Voltar
+                    </a>
+
+                    <button type="submit" class="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Cadastrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Opcional: Adicionar máscara para CNPJ
+        $(document).ready(function() {
+            
+        });
+    </script>
+}

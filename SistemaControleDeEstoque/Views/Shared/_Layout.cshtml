@@ -1,0 +1,167 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br" class="h-full">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SistemaControleDeEstoque</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="bg-slate-100 flex flex-col min-h-full">
+    <header class="bg-white shadow">
+        <nav class="mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a asp-area="" asp-controller="Home" asp-action="Index" class="flex items-center">
+                            <!-- Ícone de caixa (com cores atualizadas) -->
+                            <svg class="h-10 w-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Caixa (parte de cima - tampa) -->
+                                <path d="M10 30L50 10L90 30L50 50L10 30Z" fill="#475569" stroke="#334155" stroke-width="3" />
+                                <!-- Caixa (parte principal) -->
+                                <path d="M10 30V70L50 90V50L10 30Z" fill="#334155" stroke="#1e293b" stroke-width="3" />
+                                <path d="M50 50V90L90 70V30L50 50Z" fill="#1e293b" stroke="#0f172a" stroke-width="3" />
+                                <!-- Círculo com verificação -->
+                                <circle cx="75" cy="75" r="22" fill="#F8FAFC" stroke="#0f172a" stroke-width="3" />
+                                <path d="M65 75L72 82L85 68" stroke="#334155" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <span class="ml-2 text-xl font-bold text-slate-800 hidden md:inline">Controle de Estoque</span>
+                        </a>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-4">
+                        <!-- Botões de navegação para as diferentes seções -->
+
+                        <a asp-area="" asp-controller="Fornecedores" asp-action="Index"
+                           class="border-transparent hover:border-slate-700 text-gray-500 hover:text-slate-800 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
+                            <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                            Fornecedores
+                        </a>
+
+                        <a asp-area="" asp-controller="Produtos" asp-action="Index"
+                           class="border-transparent hover:border-slate-700 text-gray-500 hover:text-slate-800 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
+                            <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m-8-4l8 4m8 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
+                            </svg>
+                            Produtos
+                        </a>
+
+                        <a asp-area="" asp-controller="Movimentacoes" asp-action="Index"
+                           class="border-transparent hover:border-slate-700 text-gray-500 hover:text-slate-800 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
+                            <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                            </svg>
+                            Movimentações
+                        </a>
+
+                        <a asp-area="" asp-controller="Relatorios" asp-action="Index"
+                           class="border-transparent hover:border-slate-700 text-gray-500 hover:text-slate-800 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
+                            <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Relatórios
+                        </a>
+
+                        <partial name="_LoginAdmin.cshtml" />
+                    </div>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                    <partial name="_LoginPartial" />
+                </div>
+                <div class="-mr-2 flex items-center sm:hidden">
+                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-600 hover:text-slate-800 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-slate-700" id="mobile-menu-button" aria-expanded="false">
+                        <span class="sr-only">Abrir menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <!-- Menu mobile (oculto por padrão) -->
+            <div class="sm:hidden hidden" id="mobile-menu">
+                <div class="pt-2 pb-3 space-y-1">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="bg-slate-50 border-slate-700 text-slate-800 flex items-center pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                        <!-- Versão menor do mesmo ícone para o menu mobile (com cores atualizadas) -->
+                        <svg class="h-5 w-5 mr-2" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 30L50 10L90 30L50 50L10 30Z" fill="#475569" stroke="#334155" stroke-width="3" />
+                            <path d="M10 30V70L50 90V50L10 30Z" fill="#334155" stroke="#1e293b" stroke-width="3" />
+                            <path d="M50 50V90L90 70V30L50 50Z" fill="#1e293b" stroke="#0f172a" stroke-width="3" />
+                            <circle cx="75" cy="75" r="22" fill="#F8FAFC" stroke="#0f172a" stroke-width="3" />
+                            <path d="M65 75L72 82L85 68" stroke="#334155" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Home
+                    </a>
+
+                    <!-- Links do menu mobile para as diferentes seções -->
+
+                    <a asp-area="" asp-controller="Fornecedores" asp-action="Index"
+                       class="border-transparent text-gray-600 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 flex items-center pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                        <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                        Fornecedores
+                    </a>
+
+                    <a asp-area="" asp-controller="Produtos" asp-action="Index"
+                       class="border-transparent text-gray-600 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 flex items-center pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                        <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m-8-4l8 4m8 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
+                        </svg>
+                        Produtos
+                    </a>
+
+                    <a asp-area="" asp-controller="Movimentacoes" asp-action="Index"
+                       class="border-transparent text-gray-600 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 flex items-center pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                        <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                        </svg>
+                        Movimentações
+                    </a>
+
+                    <a asp-area="" asp-controller="Relatorios" asp-action="Index"
+                       class="border-transparent text-gray-600 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 flex items-center pl-3 pr-4 py-2 border-l-4 text-base font-medium">
+                        <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Relatórios
+                    </a>
+                    <partial name="_LoginAdminMobile" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+        <main>
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="bg-white border-t border-slate-200 mt-auto">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center">
+                <p class="text-sm text-gray-500">
+                    &copy; @DateTime.Now.Year - Sistema de Controle de Estoque - Todos os direitos reservados.
+                </p>
+                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="ml-3 text-slate-700 hover:text-slate-900 flex items-center" title="Política de Privacidade">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Menu mobile toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

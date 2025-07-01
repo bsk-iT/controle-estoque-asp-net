@@ -1,0 +1,97 @@
+﻿@model SistemaControleDeEstoque.Models.Relatorio
+
+@{
+    ViewData["Title"] = "Editar Relatório";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Cabeçalho -->
+    <div class="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4 rounded-t-lg shadow-md">
+        <div class="flex items-center">
+            <svg class="h-8 w-8 text-slate-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h1 class="ml-3 text-2xl font-bold text-slate-100">Editar Relatório</h1>
+        </div>
+    </div>
+
+    <!-- Conteúdo do formulário -->
+    <div class="bg-white shadow-lg rounded-b-lg p-8">
+        <div class="max-w-2xl mx-auto">
+            <form asp-action="Edit" method="post" class="space-y-6">
+                <!-- Validação -->
+                <div asp-validation-summary="ModelOnly" class="text-sm text-red-600 p-2 bg-red-50 border border-red-200 rounded" role="alert"></div>
+
+                <input type="hidden" asp-for="Id" />
+
+                <!-- Grid de campos -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Tipo -->
+                    <div>
+                        <label asp-for="Tipo" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Relatório</label>
+                        <select asp-for="Tipo" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500">
+                            <option value="">Selecione o tipo...</option>
+                            <option value="Inventário de Estoque">Inventário de Estoque</option>
+                            <option value="Movimentações">Movimentações</option>
+                            <option value="Produtos mais vendidos">Produtos mais vendidos</option>
+                            <option value="Relatório Financeiro">Relatório Financeiro</option>
+                        </select>
+                        <span asp-validation-for="Tipo" class="text-sm text-red-600"></span>
+                    </div>
+
+                    <!-- Data de Geração -->
+                    <div>
+                        <label asp-for="DataGeracao" class="block text-sm font-medium text-gray-700 mb-1">Data de Geração</label>
+                        <input asp-for="DataGeracao" type="datetime-local" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
+                        <span asp-validation-for="DataGeracao" class="text-sm text-red-600"></span>
+                    </div>
+
+                    <!-- Usuário Gerador -->
+                    <div class="md:col-span-2">
+                        <label asp-for="UsuarioGerador" class="block text-sm font-medium text-gray-700 mb-1">Responsável pela Geração</label>
+                        <input asp-for="UsuarioGerador" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
+                        <span asp-validation-for="UsuarioGerador" class="text-sm text-red-600"></span>
+                    </div>
+                </div>
+
+                <!-- Seção de parâmetros adicionais -->
+                <div class="mt-4 p-4 bg-slate-50 rounded-md border border-slate-200">
+                    <h3 class="text-sm font-medium text-slate-700 mb-2">Parâmetros Adicionais</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-500 mb-1">Data Inicial</label>
+                            <input type="date" name="DataInicial" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-500 mb-1">Data Final</label>
+                            <input type="date" name="DataFinal" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botões -->
+                <div class="flex justify-between pt-4">
+                    <a asp-action="Index" class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50">
+                        <svg class="-ml-1 mr-2 h-5 w-5 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Voltar
+                    </a>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

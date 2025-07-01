@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br" class="h-full">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Admin"] - Área Administrativa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SistemaControleDeEstoque.styles.css" asp-append-version="true" />
+</head>
+<body class="bg-gradient-to-b from-slate-50 to-white flex flex-col min-h-full">
+    <header class="bg-gradient-to-r from-slate-700 to-slate-900 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo e título -->
+                <div class="flex items-center">
+                    <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="flex-shrink-0 flex items-center text-white">
+                        <svg class="h-8 w-8 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="text-xl font-bold tracking-tight">Administração</span>
+                    </a>
+                </div>
+
+                <!-- Menu de navegação -->
+                <nav class="flex items-center space-x-4">
+                    <a asp-area="Admin" asp-controller="Admin" asp-action="Index"
+                       class="px-3 py-2 rounded-md text-sm font-medium text-slate-100 hover:bg-slate-700 transition-colors duration-150">
+                        Dashboard
+                    </a>
+                    <a asp-area="Admin" asp-controller="AdminRoles" asp-action="Index"
+                       class="px-3 py-2 rounded-md text-sm font-medium text-slate-100 hover:bg-slate-700 transition-colors duration-150">
+                        Perfis
+                    </a>
+                    <a asp-area="Admin" asp-controller="AdminUsers" asp-action="Index"
+                       class="px-3 py-2 rounded-md text-sm font-medium text-slate-100 hover:bg-slate-700 transition-colors duration-150">
+                        Usuários
+                    </a>
+
+                    <!-- Link para área pública -->
+                    <a asp-area="" asp-controller="Home" asp-action="Index"
+                       class="inline-flex items-center px-3 py-1.5 border border-slate-300 rounded-md text-sm font-medium text-slate-100 hover:bg-slate-100 hover:text-slate-900 transition-colors duration-150">
+                        <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        Site Principal
+                    </a>
+                </nav>
+
+                <!-- Menu mobile (botão) -->
+                <div class="flex -mr-2 md:hidden">
+                    <button type="button" class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-slate-200 hover:text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-expanded="false">
+                        <span class="sr-only">Abrir menu principal</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Menu mobile (conteúdo) -->
+            <div class="hidden mobile-menu md:hidden">
+                <div class="pt-2 pb-3 space-y-1 sm:px-3">
+                    <a asp-area="Admin" asp-controller="Admin" asp-action="Index"
+                       class="block px-3 py-2 rounded-md text-base font-medium text-slate-100 hover:bg-slate-700">
+                        Dashboard
+                    </a>
+                    <a asp-area="Admin" asp-controller="AdminRoles" asp-action="Index"
+                       class="block px-3 py-2 rounded-md text-base font-medium text-slate-100 hover:bg-slate-700">
+                        Perfis
+                    </a>
+                    <a asp-area="Admin" asp-controller="AdminUsers" asp-action="Index"
+                       class="block px-3 py-2 rounded-md text-base font-medium text-slate-100 hover:bg-slate-700">
+                        Usuários
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="py-2 flex items-center space-x-2 text-sm">
+                <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="text-slate-700 hover:text-slate-900">
+                    Administração
+                </a>
+                <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <span class="text-slate-800 font-medium">@ViewData["Title"]</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="flex-grow">
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="bg-white border-t border-slate-200 mt-auto">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center">
+                <p class="text-sm text-gray-500">
+                    &copy; @DateTime.Now.Year - Sistema de Controle de Estoque - Todos os direitos reservados.
+                </p>
+                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="ml-3 text-slate-700 hover:text-slate-900 flex items-center" title="Política de Privacidade">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Menu mobile toggle
+        document.querySelector('.mobile-menu-button').addEventListener('click', function() {
+            document.querySelector('.mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,288 @@
+﻿@model SistemaControleDeEstoque.Models.Relatorio
+
+@{
+    ViewData["Title"] = "Visualização de Relatório";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var dataInicio = ViewBag.DataInicio;
+    var dataFim = ViewBag.DataFim;
+
+    // Formatando datas para exibição
+    string periodoStr = "";
+    if (dataInicio == DateTime.MinValue)
+    {
+        periodoStr = $"Até {dataFim:dd/MM/yyyy}";
+    }
+    else
+    {
+        periodoStr = $"De {dataInicio:dd/MM/yyyy} até {dataFim:dd/MM/yyyy}";
+    }
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Cabeçalho -->
+    <div class="bg-gradient-to-r from-slate-700 to-slate-800 px-6 py-4 rounded-t-lg shadow-md">
+        <div class="flex items-center">
+            <svg class="h-8 w-8 text-slate-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h1 class="ml-3 text-2xl font-bold text-slate-100">
+                @{
+                    if (Model.Tipo == SistemaControleDeEstoque.Models.TipoRelatorio.Estoque)
+                    {
+                        <span>Relatório de Inventário de Estoque</span>
+                    }
+                    else if (Model.Tipo == SistemaControleDeEstoque.Models.TipoRelatorio.Movimentacoes)
+                    {
+                        <span>Relatório de Movimentações</span>
+                    }
+                }
+            </h1>
+        </div>
+        <div class="mt-2 flex flex-wrap items-center text-sm text-slate-100">
+            <span class="mr-4"><strong>Período:</strong> @periodoStr</span>
+            <span class="mr-4"><strong>Gerado em:</strong> @Model.DataGeracao.ToString("dd/MM/yyyy HH:mm")</span>
+            <span><strong>Por:</strong> @Model.UsuarioGerador</span>
+        </div>
+    </div>
+
+    <!-- Conteúdo do relatório -->
+    <div class="bg-white shadow-lg rounded-b-lg p-6">
+
+        @if (Model.Tipo == SistemaControleDeEstoque.Models.TipoRelatorio.Estoque)
+        {
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                Produto
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                Tipo
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                Quantidade
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                Valor Unitário
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                Valor Total
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                Fornecedor
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-slate-100">
+                        @{
+                            var produtos = ViewBag.Produtos as List<SistemaControleDeEstoque.Models.Produto>;
+                            decimal valorTotalEstoque = 0;
+                            int quantidadeTotalEstoque = 0;
+
+                            if (produtos != null && produtos.Any())
+                            {
+                                foreach (var produto in produtos)
+                                {
+                                    var valorTotal = produto.Quantidade * produto.Valor;
+                                    valorTotalEstoque += valorTotal;
+                                    quantidadeTotalEstoque += produto.Quantidade;
+
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">@produto.Nome</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500">@produto.Tipo</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">@produto.Quantidade</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">@produto.Valor.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("pt-BR"))</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">@valorTotal.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("pt-BR"))</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500">@(produto.Fornecedor != null ? produto.Fornecedor.Nome : "-")</div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="px-6 py-4 text-center text-sm text-slate-600">
+                                        Nenhum produto encontrado para o período especificado.
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                    <tfoot class="bg-slate-50">
+                        <tr>
+                            <td colspan="2" class="px-6 py-4 text-sm font-medium text-slate-700">
+                                Total
+                            </td>
+                            <td class="px-6 py-4 text-sm font-medium text-slate-900">
+                                @quantidadeTotalEstoque
+                            </td>
+                            <td class="px-6 py-4 text-sm font-medium text-slate-700">
+                                Valor total em estoque:
+                            </td>
+                            <td class="px-6 py-4 text-sm font-medium text-slate-900">
+                                @valorTotalEstoque.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("pt-BR"))
+                            </td>
+                            <td class="px-6 py-4"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+        else if (Model.Tipo == SistemaControleDeEstoque.Models.TipoRelatorio.Movimentacoes)
+        {
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                Data
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                Tipo
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                Produto
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                Quantidade
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                Responsável
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-slate-100">
+                        @{
+                            var movimentacoes = ViewBag.Movimentacoes as List<SistemaControleDeEstoque.Models.Movimentacao>;
+                            int totalEntradas = 0;
+                            int totalSaidas = 0;
+
+                            if (movimentacoes != null && movimentacoes.Any())
+                            {
+                                foreach (var mov in movimentacoes)
+                                {
+                                    if (mov.Tipo == "Entrada") totalEntradas += mov.Quantidade;
+                                    else if (mov.Tipo == "Saída") totalSaidas += mov.Quantidade;
+
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">@mov.DataMovimentacao.ToString("dd/MM/yyyy HH:mm")</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @if (mov.Tipo == "Entrada")
+                                            {
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <svg class="-ml-0.5 mr-1 h-2 w-2 text-green-600" fill="currentColor" viewBox="0 0 8 8">
+                                                        <circle cx="4" cy="4" r="3" />
+                                                    </svg>
+                                                    Entrada
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                    <svg class="-ml-0.5 mr-1 h-2 w-2 text-red-600" fill="currentColor" viewBox="0 0 8 8">
+                                                        <circle cx="4" cy="4" r="3" />
+                                                    </svg>
+                                                    Saída
+                                                </span>
+                                            }
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">@(mov.Produto != null ? mov.Produto.Nome : "-")</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">@mov.Quantidade</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500">@(!string.IsNullOrEmpty(mov.UsuarioNome) ? mov.UsuarioNome : mov.UsuarioId)</div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="px-6 py-4 text-center text-sm text-slate-600">
+                                        Nenhuma movimentação encontrada para o período especificado.
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                    <tfoot class="bg-slate-50">
+                        <tr>
+                            <td colspan="3" class="px-6 py-4 text-sm font-medium text-slate-700">
+                                Resumo
+                            </td>
+                            <td class="px-6 py-4" colspan="2">
+                                <div class="text-sm">
+                                    <p class="font-medium text-green-600">Total de Entradas: @totalEntradas</p>
+                                    <p class="font-medium text-red-600 mt-1">Total de Saídas: @totalSaidas</p>
+                                    <p class="font-medium text-slate-900 mt-1">Balanço: @(totalEntradas - totalSaidas)</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+
+        <!-- Botões de ação -->
+        <div class="flex justify-between mt-8">
+            <a asp-action="Details" asp-route-id="@Model?.Id" class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-800 bg-white hover:bg-slate-50 shadow-sm">
+                <svg class="-ml-1 mr-2 h-5 w-5 text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Voltar para Detalhes
+            </a>
+            <button onclick="window.print()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 focus:outline-none">
+                <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Imprimir Relatório
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        @@media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .max-w-7xl, .max-w-7xl * {
+                visibility: visible;
+            }
+
+            .max-w-7xl {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            button {
+                display: none !important;
+            }
+
+            a {
+                display: none !important;
+            }
+        }
+    </style>
+}
