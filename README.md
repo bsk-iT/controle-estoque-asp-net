@@ -29,8 +29,6 @@ Um aplicativo web completo desenvolvido em ASP.NET Core Razor Pages para control
 
 ## Credenciais para teste
 
-## Credenciais para teste
-
 O sistema possui três níveis de acesso para demonstração:
 
 - **Administrador**: 
@@ -46,8 +44,6 @@ O sistema possui três níveis de acesso para demonstração:
   - Senha: Estoque#1234
 
 Cada nível possui permissões diferentes para demonstrar o controle de acesso baseado em perfis.
-
-## Screenshots
 
 ## Screenshots
 
