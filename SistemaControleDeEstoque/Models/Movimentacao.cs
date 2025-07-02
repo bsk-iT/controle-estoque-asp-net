@@ -10,58 +10,58 @@ namespace SistemaControleDeEstoque.Models
     /// </summary>
     public class Movimentacao
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         /// <summary>
         /// Identificador único da movimentação.
         /// </summary>
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Display(Name = "Tipo da Movimentação")]
-        [Required(ErrorMessage = "{0} é obrigatório")]
         /// <summary>
         /// Tipo da movimentação: "Entrada" para adições ao estoque ou "Saída" para retiradas.
         /// </summary>
+        [Display(Name = "Tipo da Movimentação")]
+        [Required(ErrorMessage = "{0} é obrigatório")]
         public string? Tipo { get; set; }
 
-        [Display(Name = "Quantidade")]
-        [Required(ErrorMessage = "{0} é obrigatório")]
-        [Range(1, int.MaxValue, ErrorMessage = "Quantidade deve ser maior que zero")]
         /// <summary>
         /// Quantidade de itens movimentados nesta operação.
         /// </summary>
+        [Display(Name = "Quantidade")]
+        [Required(ErrorMessage = "{0} é obrigatório")]
+        [Range(1, int.MaxValue, ErrorMessage = "Quantidade deve ser maior que zero")]
         public int Quantidade { get; set; }
 
-        [Display(Name = "Data da Movimentação")]
-        [DataType(DataType.DateTime)]
         /// <summary>
         /// Data e hora em que a movimentação foi realizada.
         /// </summary>
+        [Display(Name = "Data da Movimentação")]
+        [DataType(DataType.DateTime)]
         public DateTime DataMovimentacao { get; set; } = DateTime.Now;
 
-        [Display(Name = "Produto")]
-        [Required(ErrorMessage = "{0} é obrigatório")]
         /// <summary>
         /// Identificador do produto que está sendo movimentado.
         /// </summary>
+        [Display(Name = "Produto")]
+        [Required(ErrorMessage = "{0} é obrigatório")]
         public int? ProdutoId { get; set; }
 
-        [ForeignKey("ProdutoId")]
         /// <summary>
         /// Referência ao produto associado a esta movimentação.
         /// </summary>
+        [ForeignKey("ProdutoId")]
         public Produto? Produto { get; set; }
 
-        [Display(Name = "ID do Usuário")]
         /// <summary>
         /// Identificador do usuário que realizou a movimentação.
         /// </summary>
+        [Display(Name = "ID do Usuário")]
         public string? UsuarioId { get; set; }
 
-        [Display(Name = "Responsável")]
         /// <summary>
         /// Nome do usuário responsável pela movimentação.
         /// </summary>
+        [Display(Name = "Responsável")]
         public string? UsuarioNome { get; set; }
     }
 }

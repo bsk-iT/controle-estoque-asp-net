@@ -8,120 +8,120 @@ namespace SistemaControleDeEstoque.Models
     /// </summary>
     public class Relatorio
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         /// <summary>
         /// Identificador único do relatório.
         /// </summary>
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Display(Name = "Tipo do Relatório")]
-        [Required(ErrorMessage = "{0} é obrigatório")]
         /// <summary>
         /// Define o tipo de relatório (Estoque ou Movimentações).
         /// </summary>
+        [Display(Name = "Tipo do Relatório")]
+        [Required(ErrorMessage = "{0} é obrigatório")]
         public TipoRelatorio Tipo { get; set; }
 
-        [Display(Name = "Data da Geração")]
-        [Required(ErrorMessage = "{0} é obrigatório")]
-        [DataType(DataType.Date)]
         /// <summary>
         /// Data e hora em que o relatório foi gerado.
         /// </summary>
+        [Display(Name = "Data da Geração")]
+        [Required(ErrorMessage = "{0} é obrigatório")]
+        [DataType(DataType.Date)]
         public DateTime DataGeracao { get; set; } = DateTime.Now;
 
-        [Display(Name = "Gerado por")]
         /// <summary>
         /// Identificador do usuário que gerou o relatório.
         /// </summary>
+        [Display(Name = "Gerado por")]
         public string? UsuarioGerador { get; set; }
 
         #region Parâmetros de Filtro (Não mapeados no banco)
 
-        [NotMapped]
-        [Display(Name = "Data Início")]
-        [DataType(DataType.Date)]
         /// <summary>
         /// Data inicial para filtrar os dados do relatório. Opcional para relatórios de estoque.
         /// </summary>
+        [NotMapped]
+        [Display(Name = "Data Início")]
+        [DataType(DataType.Date)]
         public DateTime? DataInicio { get; set; }
 
+        /// <summary>
+        /// Data final para filtrar os dados do relatório. Deve ser maior ou igual à Data Início.
+        /// </summary>
         [NotMapped]
         [Display(Name = "Data Fim")]
         [DataType(DataType.Date)]
         [CustomValidation(typeof(Relatorio), "ValidateDataFim")]
-        /// <summary>
-        /// Data final para filtrar os dados do relatório. Deve ser maior ou igual à Data Início.
-        /// </summary>
         public DateTime? DataFim { get; set; }
 
-        [NotMapped]
-        [Display(Name = "Fornecedor")]
         /// <summary>
         /// Identificador do fornecedor para filtrar os dados do relatório.
         /// </summary>
+        [NotMapped]
+        [Display(Name = "Fornecedor")]
         public int? FornecedorId { get; set; }
 
-        [NotMapped]
         /// <summary>
         /// Referência ao fornecedor selecionado para o filtro.
         /// </summary>
+        [NotMapped]
         public Fornecedor? Fornecedor { get; set; }
 
-        [NotMapped]
-        [Display(Name = "Produto")]
         /// <summary>
         /// Identificador do produto para filtrar os dados do relatório.
         /// </summary>
+        [NotMapped]
+        [Display(Name = "Produto")]
         public int? ProdutoId { get; set; }
 
-        [NotMapped]
         /// <summary>
         /// Referência ao produto selecionado para o filtro.
         /// </summary>
+        [NotMapped]
         public Produto? Produto { get; set; }
 
         #endregion
 
         #region Filtros específicos para Relatório de Estoque
 
-        [NotMapped]
-        [Display(Name = "Incluir Produtos com Estoque Zero")]
         /// <summary>
         /// Quando verdadeiro, inclui produtos com quantidade zero no relatório de estoque.
         /// </summary>
+        [NotMapped]
+        [Display(Name = "Incluir Produtos com Estoque Zero")]
         public bool IncluirProdutosZerados { get; set; } = false;
 
-        [NotMapped]
-        [Display(Name = "Ordenação")]
         /// <summary>
         /// Define o critério de ordenação para o relatório de estoque.
         /// </summary>
+        [NotMapped]
+        [Display(Name = "Ordenação")]
         public OrdenacaoRelatorio Ordenacao { get; set; } = OrdenacaoRelatorio.NomeProduto;
 
-        [NotMapped]
-        [Display(Name = "Apenas produtos abaixo do estoque mínimo")]
         /// <summary>
         /// Quando verdadeiro, filtra apenas produtos com estoque abaixo do nível de segurança.
         /// </summary>
+        [NotMapped]
+        [Display(Name = "Apenas produtos abaixo do estoque mínimo")]
         public bool ApenasAbaixoDoMinimo { get; set; } = false;
 
         #endregion
 
         #region Filtros específicos para Relatório de Movimentações
 
-        [NotMapped]
-        [Display(Name = "Tipo de Movimentação")]
         /// <summary>
         /// Filtro para tipo específico de movimentação (Entradas, Saídas ou Todas).
         /// </summary>
+        [NotMapped]
+        [Display(Name = "Tipo de Movimentação")]
         public TipoMovimentacao? TipoMovimentacao { get; set; }
 
-        [NotMapped]
-        [Display(Name = "Resumido (agrupado por produto)")]
         /// <summary>
         /// Quando verdadeiro, agrupa as movimentações por produto no relatório.
         /// </summary>
+        [NotMapped]
+        [Display(Name = "Resumido (agrupado por produto)")]
         public bool Resumido { get; set; } = false;
 
         #endregion
@@ -212,41 +212,80 @@ namespace SistemaControleDeEstoque.Models
         #endregion
     }
 
+    /// <summary>
+    /// Define os tipos de relatórios disponíveis no sistema.
+    /// </summary>
     public enum TipoRelatorio
     {
+        /// <summary>
+        /// Relatório de inventário de estoque.
+        /// </summary>
         [Display(Name = "Estoque")]
         Estoque,
 
+        /// <summary>
+        /// Relatório de movimentações de entrada e saída.
+        /// </summary>
         [Display(Name = "Movimentações")]
         Movimentacoes
     }
 
+    /// <summary>
+    /// Define os critérios de ordenação disponíveis para relatórios.
+    /// </summary>
     public enum OrdenacaoRelatorio
     {
+        /// <summary>
+        /// Ordenação por data crescente.
+        /// </summary>
         [Display(Name = "Data Crescente")]
         DataCrescente,
 
+        /// <summary>
+        /// Ordenação por data decrescente.
+        /// </summary>
         [Display(Name = "Data Decrescente")]
         DataDecrescente,
 
+        /// <summary>
+        /// Ordenação alfabética por nome do produto.
+        /// </summary>
         [Display(Name = "Nome do Produto")]
         NomeProduto,
 
+        /// <summary>
+        /// Ordenação por quantidade.
+        /// </summary>
         [Display(Name = "Quantidade")]
         Quantidade,
 
+        /// <summary>
+        /// Ordenação por valor.
+        /// </summary>
         [Display(Name = "Valor")]
         Valor
     }
 
+    /// <summary>
+    /// Define os tipos de movimentação disponíveis para filtros de relatório.
+    /// </summary>
     public enum TipoMovimentacao
     {
+        /// <summary>
+        /// Todas as movimentações (entradas e saídas).
+        /// </summary>
         [Display(Name = "Todas")]
         Todas,
 
+        /// <summary>
+        /// Apenas movimentações de entrada.
+        /// </summary>
         [Display(Name = "Entradas")]
         Entradas,
 
+        /// <summary>
+        /// Apenas movimentações de saída.
+        /// </summary>
         [Display(Name = "Saídas")]
         Saidas
     }
