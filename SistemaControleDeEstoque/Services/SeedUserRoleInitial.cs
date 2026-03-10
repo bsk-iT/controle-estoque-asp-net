@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace SistemaControleDeEstoque.Services
 {
@@ -6,100 +7,82 @@ namespace SistemaControleDeEstoque.Services
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public SeedUserRoleInitial(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+        public SeedUserRoleInitial(
+            RoleManager<IdentityRole> roleManager,
+            UserManager<IdentityUser> userManager,
+            IConfiguration configuration)
         {
             _roleManager = roleManager;
             _userManager = userManager;
+            _configuration = configuration;
         }
 
         public async Task SeedRolesAsync()
         {
             if (!await _roleManager.RoleExistsAsync("User"))
-            {
-                IdentityRole role = new IdentityRole();
-                role.Name = "User";
-                role.NormalizedName = "USER";
-                role.ConcurrencyStamp = Guid.NewGuid().ToString();
-                IdentityResult roleResult = await _roleManager.CreateAsync(role);
-            }
+                await _roleManager.CreateAsync(new IdentityRole("User"));
 
             if (!await _roleManager.RoleExistsAsync("Gerente"))
-            {
-                IdentityRole role = new IdentityRole();
-                role.Name = "Gerente";
-                role.NormalizedName = "GERENTE";
-                role.ConcurrencyStamp = Guid.NewGuid().ToString();
-                IdentityResult roleResult = await _roleManager.CreateAsync(role);
-            }
+                await _roleManager.CreateAsync(new IdentityRole("Gerente"));
 
             if (!await _roleManager.RoleExistsAsync("Admin"))
-            {
-                IdentityRole role = new IdentityRole();
-                role.Name = "Admin";
-                role.NormalizedName = "ADMIN";
-                role.ConcurrencyStamp = Guid.NewGuid().ToString();
-                IdentityResult roleResult = await _roleManager.CreateAsync(role);
-            }
+                await _roleManager.CreateAsync(new IdentityRole("Admin"));
         }
 
         public async Task SeedUsersAsync()
         {
+            var userPassword = _configuration["SeedUsers:UserPassword"]
+                ?? throw new InvalidOperationException("Senha do usuário seed não configurada em SeedUsers:UserPassword.");
+            var gerentePassword = _configuration["SeedUsers:GerentePassword"]
+                ?? throw new InvalidOperationException("Senha do gerente seed não configurada em SeedUsers:GerentePassword.");
+            var adminPassword = _configuration["SeedUsers:AdminPassword"]
+                ?? throw new InvalidOperationException("Senha do admin seed não configurada em SeedUsers:AdminPassword.");
+
             if (await _userManager.FindByEmailAsync("usuario@localhost") == null)
             {
-                IdentityUser user = new IdentityUser();
-                user.UserName = "usuario@localhost";
-                user.Email = "usuario@localhost";
-                user.NormalizedUserName = "USUARIO@LOCALHOST";
-                user.NormalizedEmail = "USUARIO@LOCALHOST";
-                user.EmailConfirmed = true;
-                user.LockoutEnabled = false;
-                user.ConcurrencyStamp = Guid.NewGuid().ToString();
-
-                IdentityResult result = await _userManager.CreateAsync(user, "Estoque#1234");
-
-                if (result.Succeeded)
+                var user = new IdentityUser
                 {
+                    UserName = "usuario@localhost",
+                    Email = "usuario@localhost",
+                    EmailConfirmed = true,
+                    ConcurrencyStamp = Guid.NewGuid().ToString()
+                };
+
+                var result = await _userManager.CreateAsync(user, userPassword);
+                if (result.Succeeded)
                     await _userManager.AddToRoleAsync(user, "User");
-                }
             }
 
             if (await _userManager.FindByEmailAsync("gerente@localhost") == null)
             {
-                IdentityUser user = new IdentityUser();
-                user.UserName = "gerente@localhost";
-                user.Email = "gerente@localhost";
-                user.NormalizedUserName = "GERENTE@LOCALHOST";
-                user.NormalizedEmail = "GERENTE@LOCALHOST";
-                user.EmailConfirmed = true;
-                user.LockoutEnabled = false;
-                user.ConcurrencyStamp = Guid.NewGuid().ToString();
-
-                IdentityResult result = await _userManager.CreateAsync(user, "Gerente#1234");
-
-                if (result.Succeeded)
+                var user = new IdentityUser
                 {
+                    UserName = "gerente@localhost",
+                    Email = "gerente@localhost",
+                    EmailConfirmed = true,
+                    ConcurrencyStamp = Guid.NewGuid().ToString()
+                };
+
+                var result = await _userManager.CreateAsync(user, gerentePassword);
+                if (result.Succeeded)
                     await _userManager.AddToRoleAsync(user, "Gerente");
-                }
             }
 
             if (await _userManager.FindByEmailAsync("admin@localhost") == null)
             {
-                IdentityUser user = new IdentityUser();
-                user.UserName = "admin@localhost";
-                user.Email = "admin@localhost";
-                user.NormalizedUserName = "ADMIN@LOCALHOST";
-                user.NormalizedEmail = "ADMIN@LOCALHOST";
-                user.EmailConfirmed = true;
-                user.LockoutEnabled = false;
-                user.ConcurrencyStamp = Guid.NewGuid().ToString();
-
-                IdentityResult result = await _userManager.CreateAsync(user, "Admin#1234");
-
-                if (result.Succeeded)
+                var user = new IdentityUser
                 {
+                    UserName = "admin@localhost",
+                    Email = "admin@localhost",
+                    EmailConfirmed = true,
+                    ConcurrencyStamp = Guid.NewGuid().ToString()
+                };
+
+                var result = await _userManager.CreateAsync(user, adminPassword);
+                if (result.Succeeded)
                     await _userManager.AddToRoleAsync(user, "Admin");
-                }
             }
         }
     }

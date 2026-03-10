@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SistemaControleDeEstoque.Data;
 using SistemaControleDeEstoque.Models;
@@ -8,6 +9,7 @@ namespace SistemaControleDeEstoque.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProdutosFornecedoresController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -19,6 +21,7 @@ namespace SistemaControleDeEstoque.Controllers.Api
 
         // POST: api/ProdutosFornecedores
         [HttpPost]
+        [Authorize(Roles = "Admin,Gerente")]
         public async Task<ActionResult<ProdutoFornecedor>> PostProdutoFornecedor([FromBody] ProdutoFornecedor produtoFornecedor)
         {
             // Verificar se já existe essa associação
@@ -40,6 +43,7 @@ namespace SistemaControleDeEstoque.Controllers.Api
 
         // DELETE: api/ProdutosFornecedores/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProdutoFornecedor(int id)
         {
             var produtoFornecedor = await _context.ProdutoFornecedor.FindAsync(id);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using SistemaControleDeEstoque.Models;
 
 namespace SistemaControleDeEstoque.Controllers
 {
+    [Authorize]
     public class ProdutosFornecedoresController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -47,6 +49,7 @@ namespace SistemaControleDeEstoque.Controllers
         }
 
         // GET: ProdutosFornecedores/Create
+        [Authorize(Roles = "Admin,Gerente")]
         public IActionResult Create()
         {
             ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "CNPJ");
@@ -59,6 +62,7 @@ namespace SistemaControleDeEstoque.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> Create([Bind("Id,ProdutoId,FornecedorId")] ProdutoFornecedor produtoFornecedor)
         {
             if (ModelState.IsValid)
@@ -73,6 +77,7 @@ namespace SistemaControleDeEstoque.Controllers
         }
 
         // GET: ProdutosFornecedores/Edit/5
+        [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -95,6 +100,7 @@ namespace SistemaControleDeEstoque.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ProdutoId,FornecedorId")] ProdutoFornecedor produtoFornecedor)
         {
             if (id != produtoFornecedor.Id)
@@ -128,6 +134,7 @@ namespace SistemaControleDeEstoque.Controllers
         }
 
         // GET: ProdutosFornecedores/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -150,6 +157,7 @@ namespace SistemaControleDeEstoque.Controllers
         // POST: ProdutosFornecedores/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var produtoFornecedor = await _context.ProdutoFornecedor.FindAsync(id);
