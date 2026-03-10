@@ -14,15 +14,17 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+}
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddErrorDescriber<TraduzirErrosIdentity>()
     .AddDefaultTokenProviders();
 
-// Configuração de localização para pt-BR
+// Configuraï¿½ï¿½o de localizaï¿½ï¿½o para pt-BR
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var supportedCultures = new[] { new CultureInfo("pt-BR") };
@@ -68,6 +70,7 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("RequireUserAdminGerenteRole", policy => policy.RequireRole("User", "Gerente", "Admin"));
 
 builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
+builder.Services.AddScoped<ISeedDataInitial, SeedDataInitial>();
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
@@ -85,7 +88,7 @@ else
     app.UseHsts();
 }
 
-// Usar a configuração de localização
+// Usar a configuraï¿½ï¿½o de localizaï¿½ï¿½o
 app.UseRequestLocalization();
 
 app.UseHttpsRedirection();
@@ -93,10 +96,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-await CriarPerfisUsuariosAsync(app);
-
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Seed executado apÃ³s o pipeline de autenticaÃ§Ã£o/autorizaÃ§Ã£o estar configurado
+await CriarPerfisUsuariosAsync(app);
+await PopularDadosAsync(app);
 
 app.MapControllerRoute(
     name: "MinhaArea",
@@ -112,11 +117,20 @@ app.Run();
 
 static async Task CriarPerfisUsuariosAsync(WebApplication app)
 {
-    // Obtém o escopo de serviços para resolver dependências
-    var scopeFactory = app.Services.GetService<IServiceScopeFactory>() ?? throw new InvalidOperationException("IServiceScopeFactory não está registrado nos serviços.");
+    // Obtï¿½m o escopo de serviï¿½os para resolver dependï¿½ncias
+    var scopeFactory = app.Services.GetService<IServiceScopeFactory>() ?? throw new InvalidOperationException("IServiceScopeFactory nï¿½o estï¿½ registrado nos serviï¿½os.");
     using var serviceScope = scopeFactory.CreateScope();
-    // Obtém o serviço ISeedUserRoleInitial do escopo de serviços
-    var service = serviceScope.ServiceProvider.GetService<ISeedUserRoleInitial>() ?? throw new InvalidOperationException("ISeedUserRoleInitial não está registrado nos serviços.");
+    // Obtï¿½m o serviï¿½o ISeedUserRoleInitial do escopo de serviï¿½os
+    var service = serviceScope.ServiceProvider.GetService<ISeedUserRoleInitial>() ?? throw new InvalidOperationException("ISeedUserRoleInitial nï¿½o estï¿½ registrado nos serviï¿½os.");
     await service.SeedRolesAsync();
     await service.SeedUsersAsync();
+}
+
+static async Task PopularDadosAsync(WebApplication app)
+{
+    var scopeFactory = app.Services.GetService<IServiceScopeFactory>() ?? throw new InvalidOperationException("IServiceScopeFactory nï¿½o estï¿½ registrado nos serviï¿½os.");
+    using var serviceScope = scopeFactory.CreateScope();
+    var service = serviceScope.ServiceProvider.GetService<ISeedDataInitial>() ?? throw new InvalidOperationException("ISeedDataInitial nï¿½o estï¿½ registrado nos serviï¿½os.");
+    await service.SeedFornecedoresAsync();
+    await service.SeedProdutosAsync();
 }

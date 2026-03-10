@@ -37,7 +37,7 @@ namespace SistemaControleDeEstoque.Models
         /// </summary>
         [Display(Name = "Data da Movimentação")]
         [DataType(DataType.DateTime)]
-        public DateTime DataMovimentacao { get; set; } = DateTime.Now;
+        public DateTime DataMovimentacao { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// Identificador do produto que está sendo movimentado.

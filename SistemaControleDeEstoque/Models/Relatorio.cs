@@ -28,7 +28,7 @@ namespace SistemaControleDeEstoque.Models
         [Display(Name = "Data da Geração")]
         [Required(ErrorMessage = "{0} é obrigatório")]
         [DataType(DataType.Date)]
-        public DateTime DataGeracao { get; set; } = DateTime.Now;
+        public DateTime DataGeracao { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// Identificador do usuário que gerou o relatório.
@@ -191,7 +191,7 @@ namespace SistemaControleDeEstoque.Models
         {
             // Implementar lógica para gerar relatório de estoque
             // Apenas uma implementação de exemplo
-            return $"Relatório de Estoque gerado em {DateTime.Now}";
+            return $"Relatório de Estoque gerado em {DateTime.UtcNow}";
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace SistemaControleDeEstoque.Models
                 ? $" no período de {DataInicio.Value:dd/MM/yyyy} até {DataFim.Value:dd/MM/yyyy}"
                 : "";
 
-            return $"Relatório de Movimentações{periodo} gerado em {DateTime.Now}";
+            return $"Relatório de Movimentações{periodo} gerado em {DateTime.UtcNow}";
         }
 
         #endregion

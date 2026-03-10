@@ -73,7 +73,7 @@ namespace SistemaControleDeEstoque.Controllers
             // Criar instância de movimentação com usuário preenchido
             var movimentacao = new Movimentacao
             {
-                DataMovimentacao = DateTime.Now,
+                DataMovimentacao = DateTime.UtcNow,
                 UsuarioId = user?.Id,
                 UsuarioNome = user?.UserName ?? "Usuário não identificado"
             };
