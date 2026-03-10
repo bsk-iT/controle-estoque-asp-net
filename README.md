@@ -33,15 +33,12 @@ O sistema possui três níveis de acesso para demonstração:
 
 - **Administrador**: 
   - Email: admin@localhost
-  - Senha: Admin#1234
 
 - **Gerente**: 
   - Email: gerente@localhost
-  - Senha: Gerente#1234
 
 - **Usuário**: 
   - Email: usuario@localhost
-  - Senha: Estoque#1234
 
 Cada nível possui permissões diferentes para demonstrar o controle de acesso baseado em perfis.
 
