@@ -48,7 +48,7 @@ namespace SistemaControleDeEstoque.Controllers
         }
 
         // GET: Produtos/Create
-        [Authorize(Policy = "RequireUserAdminGerenteRole")]
+        [Authorize(Roles = "Admin,Gerente")]
         public IActionResult Create()
         {
             ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "Nome");

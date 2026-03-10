@@ -48,7 +48,7 @@ namespace SistemaControleDeEstoque.Controllers
         }
 
         // GET: Fornecedores/Create
-        [Authorize(Policy = "RequireUserAdminGerenteRole")]
+        [Authorize(Roles = "Admin,Gerente")]
         public IActionResult Create()
         {
             return View();
