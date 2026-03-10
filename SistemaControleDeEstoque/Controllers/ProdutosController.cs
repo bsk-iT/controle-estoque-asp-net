@@ -58,6 +58,7 @@ namespace SistemaControleDeEstoque.Controllers
         // POST: Produtos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> Create([Bind("Id,Nome,Tipo,Quantidade,Valor,FornecedorId")] Produto produto)
         {
             if (ModelState.IsValid)
@@ -107,6 +108,7 @@ namespace SistemaControleDeEstoque.Controllers
         // POST: Produtos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Tipo,Quantidade,Valor,FornecedorId")] Produto produto)
         {
             if (id != produto.Id)
@@ -162,6 +164,7 @@ namespace SistemaControleDeEstoque.Controllers
         // POST: Produtos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var produto = await _context.Produto.FindAsync(id);

@@ -163,7 +163,7 @@ namespace SistemaControleDeEstoque.Controllers
 
         // GET: Relatorios/Edit/5
         [Authorize(Roles = "Admin,Gerente")]
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             // Redirecionar para detalhes ou index com mensagem informativa
             TempData["Mensagem"] = "A edição de relatórios não é permitida. Relatórios são registros históricos imutáveis.";
@@ -173,7 +173,7 @@ namespace SistemaControleDeEstoque.Controllers
         // POST: Relatorios/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Tipo,DataGeracao,UsuarioGerador")] Relatorio relatorio)
+        public IActionResult Edit(int id, [Bind("Id,Tipo,DataGeracao,UsuarioGerador")] Relatorio relatorio)
         {
             // Redirecionar para detalhes ou index com mensagem informativa
             TempData["Mensagem"] = "A edição de relatórios não é permitida. Relatórios são registros históricos imutáveis.";

@@ -84,18 +84,9 @@ namespace SistemaControleDeEstoque.Controllers
         // POST: Movimentacoes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireUserAdminGerenteRole")]
         public async Task<IActionResult> Create([Bind("Id,Tipo,Quantidade,DataMovimentacao,ProdutoId,UsuarioId,UsuarioNome")] Movimentacao movimentacao)
         {
-            // Validar se a quantidade é válida para uma saída
-            if (movimentacao.Tipo == "Saída" && movimentacao.ProdutoId.HasValue)
-            {
-                var produto = await _context.Produto.FindAsync(movimentacao.ProdutoId);
-                if (produto != null && movimentacao.Quantidade > produto.Quantidade)
-                {
-                    ModelState.AddModelError("Quantidade", $"Quantidade solicitada ({movimentacao.Quantidade}) excede o estoque disponível ({produto.Quantidade}).");
-                }
-            }
-
             if (ModelState.IsValid)
             {
                 // Se não foi enviado um usuário, garantir que seja o atual
@@ -109,29 +100,46 @@ namespace SistemaControleDeEstoque.Controllers
                     }
                 }
 
-                // Atualizar o estoque do produto
-                if (movimentacao.ProdutoId.HasValue)
+                await using var transaction = await _context.Database.BeginTransactionAsync();
+                try
                 {
-                    var produto = await _context.Produto.FindAsync(movimentacao.ProdutoId);
-                    if (produto != null)
+                    // Validar e atualizar o estoque do produto dentro da mesma transação
+                    if (movimentacao.ProdutoId.HasValue)
                     {
-                        if (movimentacao.Tipo == "Entrada")
+                        var produto = await _context.Produto.FindAsync(movimentacao.ProdutoId);
+                        if (produto != null)
                         {
-                            produto.Quantidade += movimentacao.Quantidade;
+                            if (movimentacao.Tipo == "Saída")
+                            {
+                                if (movimentacao.Quantidade > produto.Quantidade)
+                                {
+                                    ModelState.AddModelError("Quantidade", $"Quantidade solicitada ({movimentacao.Quantidade}) excede o estoque disponível ({produto.Quantidade}).");
+                                    await transaction.RollbackAsync();
+                                    goto ValidationFailed;
+                                }
+                                produto.Quantidade -= movimentacao.Quantidade;
+                            }
+                            else if (movimentacao.Tipo == "Entrada")
+                            {
+                                produto.Quantidade += movimentacao.Quantidade;
+                            }
+                            _context.Update(produto);
                         }
-                        else if (movimentacao.Tipo == "Saída")
-                        {
-                            produto.Quantidade -= movimentacao.Quantidade;
-                        }
-                        _context.Update(produto);
                     }
-                }
 
-                _context.Add(movimentacao);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    _context.Add(movimentacao);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
             }
 
+            ValidationFailed:
             // Se chegou aqui, é porque houve erro de validação, recarregar dados para a view
             ViewData["ProdutoId"] = new SelectList(_context.Produto, "Id", "Nome", movimentacao.ProdutoId);
             var produtosQuantidades = await _context.Produto
