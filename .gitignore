@@ -364,4 +364,8 @@ MigrationBackup/
 .ionide/
 
 # Fody - auto-generated XML schema
-FodyWeavers.xsd
+FodyWeavers.xsdSistemaControleDeEstoque/appsettings.Development.json
+
+# Documentação de revisão
+Revisão Completa do Código — Sistema de Controle de Estoque.md
+SistemaControleDeEstoque/appsettings.Development.json
