@@ -19,8 +19,8 @@
         }
 
         <form method="post" class="space-y-8">
-            <input type="hidden" name="roleName" value="@Model.Role?.Name ?? string.Empty" />
-            <input type="hidden" name="roleId" value="@Model.Role?.Id ?? string.Empty" />
+            <input type="hidden" name="roleName" value="@(Model.Role?.Name ?? string.Empty)" />
+            <input type="hidden" name="roleId" value="@(Model.Role?.Id ?? string.Empty)" />
 
             <!-- Adicionar usuários ao perfil -->
             <div class="bg-white overflow-hidden shadow rounded-lg">

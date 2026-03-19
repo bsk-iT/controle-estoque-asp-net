@@ -7,6 +7,10 @@
 appsettings.Development.json
 appsettings.Production.json
 
+# Logs gerados pelo Serilog em tempo de execução
+logs/
+*.log
+
 # User-specific files
 *.rsuser
 *.suo
@@ -186,9 +190,8 @@ publish/
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
-# Note: Comment the next line if you want to checkin your web deploy settings,
-# but database connection strings (with potential passwords) will be unencrypted
-*.pubxml
+# Apenas o .user (contém senha) é ignorado; o .pubxml em si vai para o repositório
+*.pubxml.user
 *.publishproj
 
 # Microsoft Azure Web App publish settings. Comment the next line if you want to
@@ -364,8 +367,18 @@ MigrationBackup/
 .ionide/
 
 # Fody - auto-generated XML schema
-FodyWeavers.xsdSistemaControleDeEstoque/appsettings.Development.json
+FodyWeavers.xsd
 
-# Documentação de revisão
-Revisão Completa do Código — Sistema de Controle de Estoque.md
-SistemaControleDeEstoque/appsettings.Development.json
+# Documentação temporária gerada na raiz do projeto (não versionar)
+/SEED_README.md
+/IMPLEMENTACAO_SEED.md
+/GUIA_RAPIDO_SEED.md
+/Revisão Completa do Código — Sistema de Controle de Estoque.md
+
+# Arquivos de configuração de publicação/deploy (gerados pelo Visual Studio/ambiente local)
+SistemaControleDeEstoque/Properties/PublishProfiles/
+SistemaControleDeEstoque/web.config
+SistemaControleDeEstoque/dotnet-tools.json
+
+# Guidelines de desenvolvimento (gerado por ferramentas de IA, não faz parte do código)
+/AGENTS.md

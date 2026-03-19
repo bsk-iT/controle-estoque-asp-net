@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using SistemaControleDeEstoque.Areas.Admin.Models;
 using System.ComponentModel.DataAnnotations;
 
@@ -44,13 +45,20 @@ namespace SistemaControleDeEstoque.Areas.Admin.Controllers
 
         public async Task<IActionResult> Update(string id)
         {
-            IdentityRole role = await roleManager.FindByIdAsync(id);
+            IdentityRole? role = await roleManager.FindByIdAsync(id);
+            if (role == null)
+                return NotFound();
+
             List<IdentityUser> members = new List<IdentityUser>();
             List<IdentityUser> nonMembers = new List<IdentityUser>();
 
-            foreach (IdentityUser user in userManager.Users)
+            // Materializa todos os usuários em memória antes do loop para evitar
+            // "There is already an open DataReader" ao chamar IsInRoleAsync dentro do foreach.
+            var allUsers = await userManager.Users.ToListAsync();
+
+            foreach (IdentityUser user in allUsers)
             {
-                var list = await userManager.IsInRoleAsync(user, role.Name) ? members : nonMembers;
+                var list = await userManager.IsInRoleAsync(user, role.Name!) ? members : nonMembers;
                 list.Add(user);
             }
 
@@ -94,20 +102,20 @@ namespace SistemaControleDeEstoque.Areas.Admin.Controllers
                     }
                 }
             }
-            if (ModelState.IsValid)
-                return RedirectToAction("Index");
-            else
-                return await Update(model.RoleId);
+        if (ModelState.IsValid)
+            return RedirectToAction("Index");
+
+        return await Update(model.RoleId ?? string.Empty);
         }
 
         public async Task<IActionResult> Delete(string id)
         {
-            IdentityRole role = await roleManager.FindByIdAsync(id);
-            
+            IdentityRole? role = await roleManager.FindByIdAsync(id);
+
             if (role == null)
             {
                 ModelState.AddModelError("", "Role não encontrada.");
-                return RedirectToAction("Index", roleManager.Roles);
+                return RedirectToAction("Index");
             }
             return View(role);
         }

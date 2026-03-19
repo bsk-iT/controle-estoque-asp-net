@@ -5,9 +5,17 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-SistemaControleDeEstoque-527883e3-ff0a-441d-8e41-92228bc8d3ff</UserSecretsId>
+    <!-- Garante que o web.config customizado não seja gerado automaticamente -->
+    <IsTransformWebConfigEnabled>false</IsTransformWebConfigEnabled>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\ISeedDataInitial.cs" />
+    <Compile Remove="Services\SeedDataInitial.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="8.*" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.17" />
@@ -15,10 +23,18 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.17" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
+  </ItemGroup>
+
+  <!-- Exclui appsettings.Development.json da publicação para Production -->
+  <ItemGroup>
+    <Content Remove="appsettings.Development.json" />
   </ItemGroup>
 
 </Project>

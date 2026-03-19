@@ -1,15 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SistemaControleDeEstoque.Models;
 
 namespace SistemaControleDeEstoque.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext, IDataProtectionKeyContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
+
+        /// <summary>Tabela de chaves do Data Protection — persiste chaves entre reinicializações.</summary>
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = default!;
 
         public DbSet<Fornecedor> Fornecedor { get; set; } = default!;
         public DbSet<Produto> Produto { get; set; } = default!;
