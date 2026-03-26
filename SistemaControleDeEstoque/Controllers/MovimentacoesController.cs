@@ -27,7 +27,6 @@ namespace SistemaControleDeEstoque.Controllers
         }
 
         // GET: Movimentacoes
-        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var movimentacoes = await _context.Movimentacao

@@ -22,7 +22,6 @@ namespace SistemaControleDeEstoque.Controllers
         }
 
         // GET: Fornecedores
-        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Fornecedor.ToListAsync());

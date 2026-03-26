@@ -17,7 +17,6 @@ namespace SistemaControleDeEstoque.Controllers
         private readonly ApplicationDbContext _context = context;
 
         // GET: Produtos
-        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Produto
