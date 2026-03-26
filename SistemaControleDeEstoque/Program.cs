@@ -7,6 +7,7 @@ using Serilog;
 using SistemaControleDeEstoque.Data;
 using SistemaControleDeEstoque.Services;
 using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
 
 // Garantir que a pasta logs/ existe antes de qualquer operação
 var logsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "logs");
