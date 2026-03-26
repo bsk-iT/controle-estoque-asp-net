@@ -1,3 +1,6 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+
 <!DOCTYPE html>
 <html lang="pt-br" class="h-full">
 <head>
@@ -66,22 +69,25 @@
 
                 <!-- NAV LINKS (desktop) -->
                 <div class="hidden md:flex items-center gap-8">
-                    <a asp-area="" asp-controller="Fornecedores" asp-action="Index"
-                       class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
-                        Fornecedores
-                    </a>
-                    <a asp-area="" asp-controller="Produtos" asp-action="Index"
-                       class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
-                        Produtos
-                    </a>
-                    <a asp-area="" asp-controller="Movimentacoes" asp-action="Index"
-                       class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
-                        Movimentações
-                    </a>
-                    <a asp-area="" asp-controller="Relatorios" asp-action="Index"
-                       class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
-                        Relatórios
-                    </a>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <a asp-area="" asp-controller="Fornecedores" asp-action="Index"
+                           class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
+                            Fornecedores
+                        </a>
+                        <a asp-area="" asp-controller="Produtos" asp-action="Index"
+                           class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
+                            Produtos
+                        </a>
+                        <a asp-area="" asp-controller="Movimentacoes" asp-action="Index"
+                           class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
+                            Movimentações
+                        </a>
+                        <a asp-area="" asp-controller="Relatorios" asp-action="Index"
+                           class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
+                            Relatórios
+                        </a>
+                    }
                     <!-- Admin (apenas para role Admin) -->
                     <partial name="_LoginAdmin.cshtml" />
                 </div>
@@ -121,22 +127,25 @@
                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
                         Home
                     </a>
-                    <a asp-area="" asp-controller="Fornecedores" asp-action="Index"
-                       class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
-                        Fornecedores
-                    </a>
-                    <a asp-area="" asp-controller="Produtos" asp-action="Index"
-                       class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
-                        Produtos
-                    </a>
-                    <a asp-area="" asp-controller="Movimentacoes" asp-action="Index"
-                       class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
-                        Movimentações
-                    </a>
-                    <a asp-area="" asp-controller="Relatorios" asp-action="Index"
-                       class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
-                        Relatórios
-                    </a>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <a asp-area="" asp-controller="Fornecedores" asp-action="Index"
+                           class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+                            Fornecedores
+                        </a>
+                        <a asp-area="" asp-controller="Produtos" asp-action="Index"
+                           class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+                            Produtos
+                        </a>
+                        <a asp-area="" asp-controller="Movimentacoes" asp-action="Index"
+                           class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+                            Movimentações
+                        </a>
+                        <a asp-area="" asp-controller="Relatorios" asp-action="Index"
+                           class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+                            Relatórios
+                        </a>
+                    }
                     <partial name="_LoginAdminMobile" />
                     <!-- Auth mobile -->
                     <div class="pt-3 pb-2 px-4 border-t border-gray-100 dark:border-gray-800">
