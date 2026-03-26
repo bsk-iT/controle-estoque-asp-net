@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SistemaControleDeEstoque.Data;
@@ -6,6 +7,7 @@ using SistemaControleDeEstoque.Models;
 
 namespace SistemaControleDeEstoque.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -19,7 +21,7 @@ namespace SistemaControleDeEstoque.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Obter dados para a visão geral do estoque
+            // Obter dados para a visï¿½o geral do estoque
 
             // 1. Total de produtos cadastrados
             var totalProdutos = await _context.Produto.CountAsync();
@@ -27,7 +29,7 @@ namespace SistemaControleDeEstoque.Controllers
             // 2. Valor total do estoque (quantidade * valor de cada produto)
             var valorTotalEstoque = await _context.Produto.SumAsync(p => p.Quantidade * p.Valor);
 
-            // 3. Produtos com estoque abaixo do estoque de segurança
+            // 3. Produtos com estoque abaixo do estoque de seguranï¿½a
             var produtosEstoqueBaixo = await _context.Produto
                 .Where(p => p.Quantidade < p.EstoqueSeguranca)
                 .CountAsync();
@@ -37,10 +39,10 @@ namespace SistemaControleDeEstoque.Controllers
             ViewBag.ValorTotalEstoque = valorTotalEstoque;
             ViewBag.ProdutosEstoqueBaixo = produtosEstoqueBaixo;
 
-            // Variação mensal - exemplo estático, mas poderia ser calculado dinamicamente
-            // comparando com dados do mês anterior armazenados no banco de dados
-            ViewBag.VariacaoTotalProdutos = 0; // 0% de variação (sem alteração)
-            ViewBag.VariacaoValorEstoque = 0;  // 0% de variação (sem alteração)
+            // Variaï¿½ï¿½o mensal - exemplo estï¿½tico, mas poderia ser calculado dinamicamente
+            // comparando com dados do mï¿½s anterior armazenados no banco de dados
+            ViewBag.VariacaoTotalProdutos = 0; // 0% de variaï¿½ï¿½o (sem alteraï¿½ï¿½o)
+            ViewBag.VariacaoValorEstoque = 0;  // 0% de variaï¿½ï¿½o (sem alteraï¿½ï¿½o)
 
             return View();
         }

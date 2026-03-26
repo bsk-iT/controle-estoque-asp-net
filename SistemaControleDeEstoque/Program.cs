@@ -93,7 +93,8 @@ try
     });
 
     builder.Services.AddAuthorizationBuilder()
-        .AddPolicy("RequireUserAdminGerenteRole", policy => policy.RequireRole("User", "Gerente", "Admin"));
+        .AddPolicy("RequireUserAdminGerenteRole", policy => policy.RequireRole("User", "Gerente", "Admin"))
+        .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
 
     builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
 
