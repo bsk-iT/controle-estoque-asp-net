@@ -1,5 +1,8 @@
+/* ── Font size base ──────────────────────────────────────────── */
 html {
     font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -8,15 +11,173 @@ html {
     }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-    position: relative;
-    min-height: 100%;
-}
-
+/* ── Body margin reset ───────────────────────────────────────── */
 body {
-    margin-bottom: 60px;
+    margin-bottom: 0;
+}
+
+/* ── Focus ring ──────────────────────────────────────────────── */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #000;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ANIMATED TEXT CYCLE
+   Replica o efeito Framer Motion do componente thimows/animated-text-cycle:
+   - Entrada: vem de cima (translateY -16px), opacity 0→1, blur 8px→0
+   - Saída:   vai para baixo (translateY +16px), opacity 1→0, blur 0→8px
+   A largura do wrapper anima suavemente via transition CSS.
+   ════════════════════════════════════════════════════════════════ */
+
+/* Container externo — largura anima tipo spring */
+.text-cycle-wrapper {
+    display: inline-block;
+    position: relative;
+    vertical-align: bottom;
+    overflow: visible;
+    transition: width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Altura igual à linha de texto */
+    line-height: inherit;
+}
+
+/* Cada item de texto — sobrepostos via absolute */
+.text-cycle-item {
+    display: inline-block;
+    white-space: nowrap;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* ── Keyframes de ENTRADA: desce do topo e desfoca para nitidez */
+@keyframes textCycleIn {
+    0% {
+        opacity: 0;
+        transform: translateY(calc(-50% - 16px));
+        filter: blur(8px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(-50%);
+        filter: blur(0px);
+    }
+}
+
+/* ── Keyframes de SAÍDA: desce para baixo e desfoca */
+@keyframes textCycleOut {
+    0% {
+        opacity: 1;
+        transform: translateY(-50%);
+        filter: blur(0px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(calc(-50% + 16px));
+        filter: blur(8px);
+    }
+}
+
+.text-cycle-entering {
+    animation: textCycleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.text-cycle-exiting {
+    animation: textCycleOut 0.3s cubic-bezier(0.55, 0, 0.55, 0.085) forwards;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   DATATABLES — DARK MODE OVERRIDES
+   Os elementos abaixo são injetados dinamicamente pelo DataTables JS,
+   portanto não aceitam classes Tailwind. São sobrescritos via CSS
+   usando o seletor .dark (classe adicionada ao <html> pelo toggle).
+
+   RAIZ: o DataTables define "color: inherit" em todos os seus filhos
+   (.dt-info, .dt-length, .dt-search, .dt-paging). Setando a cor base
+   no div.dt-container, todos herdam automaticamente.
+   ════════════════════════════════════════════════════════════════ */
+
+/* Cor base — todos os filhos com color:inherit herdam daqui */
+.dark div.dt-container {
+    color: #9ca3af; /* gray-400 */
+}
+
+/* "Nenhum registro encontrado" — sobrescreve o azul padrão do tema */
+.dark td.dataTables_empty,
+.dark td.dt-empty {
+    color: #6b7280 !important; /* gray-500 */
+}
+
+/* Input de busca */
+.dark .dt-search input {
+    color: #f9fafb;           /* gray-50 */
+    background-color: #030712; /* gray-950 */
+    border-color: #374151;    /* gray-700 */
+}
+
+.dark .dt-search input::placeholder {
+    color: #6b7280; /* gray-500 */
+}
+
+.dark .dt-search input:focus {
+    outline: none;
+    border-color: #ffffff;
+    box-shadow: 0 0 0 1px #ffffff;
+}
+
+/* Select "Exibir X por página" */
+.dark .dt-length select {
+    color: #f9fafb;           /* gray-50 */
+    background-color: #030712; /* gray-950 */
+    border-color: #374151;    /* gray-700 */
+}
+
+/* Tipografia discreta — length, info, empty */
+.dt-length,
+.dt-info,
+td.dt-empty,
+td.dataTables_empty {
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: #9ca3af; /* gray-400 */
+}
+
+/* Select do length */
+.dt-length select {
+    font-size: 0.7rem;
+}
+
+/* Paginação — reduz fonte dos botões */
+.dt-paging .dt-paging-button {
+    font-size: 0.7rem;
+}
+
+/* Botões de paginação */
+.dark .dt-paging .dt-paging-button {
+    color: #d1d5db !important; /* gray-300 */
+    background: transparent !important;
+    border-color: transparent !important;
+}
+
+.dark .dt-paging .dt-paging-button:hover:not(.disabled) {
+    color: #ffffff !important;
+    background: #1f2937 !important; /* gray-800 */
+    border-color: #374151 !important;
+}
+
+.dark .dt-paging .dt-paging-button.current,
+.dark .dt-paging .dt-paging-button.current:hover {
+    color: #000000 !important;
+    background: #ffffff !important;
+    border-color: #ffffff !important;
+}
+
+.dark .dt-paging .dt-paging-button.disabled,
+.dark .dt-paging .dt-paging-button.disabled:hover {
+    color: #4b5563 !important; /* gray-600 */
 }
