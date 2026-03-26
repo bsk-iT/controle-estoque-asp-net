@@ -27,7 +27,16 @@ namespace SistemaControleDeEstoque.Controllers
         // GET: Relatorios
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Relatorio.ToListAsync());
+            var relatorios = await _context.Relatorio.ToListAsync();
+
+            // Filtrar por usuário se não for Admin ou Gerente (previne IDOR)
+            if (!User.IsInRole("Admin") && !User.IsInRole("Gerente"))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                relatorios = relatorios.Where(r => r.UsuarioGerador == user?.UserName).ToList();
+            }
+
+            return View(relatorios);
         }
 
         // GET: Relatorios/Details/5
@@ -44,6 +53,16 @@ namespace SistemaControleDeEstoque.Controllers
             if (relatorio == null)
             {
                 return NotFound();
+            }
+
+            // Controle de ownership: apenas Admin/Gerente ou o próprio usuário podem ver
+            if (!User.IsInRole("Admin") && !User.IsInRole("Gerente"))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (relatorio.UsuarioGerador != user?.UserName)
+                {
+                    return NotFound(); // Retorna 404 em vez de 403 para não revelar que o registro existe
+                }
             }
 
             return View(relatorio);

@@ -32,6 +32,14 @@ namespace SistemaControleDeEstoque.Controllers
             var movimentacoes = await _context.Movimentacao
                 .Include(m => m.Produto)
                 .ToListAsync();
+
+            // Filtrar por usuário se não for Admin ou Gerente (previne IDOR)
+            if (!User.IsInRole("Admin") && !User.IsInRole("Gerente"))
+            {
+                var userId = _userManager.GetUserId(User);
+                movimentacoes = movimentacoes.Where(m => m.UsuarioId == userId).ToList();
+            }
+
             return View(movimentacoes);
         }
 
@@ -50,6 +58,16 @@ namespace SistemaControleDeEstoque.Controllers
             if (movimentacao == null)
             {
                 return NotFound();
+            }
+
+            // Controle de ownership: apenas Admin/Gerente ou o próprio usuário podem ver
+            if (!User.IsInRole("Admin") && !User.IsInRole("Gerente"))
+            {
+                var userId = _userManager.GetUserId(User);
+                if (movimentacao.UsuarioId != userId)
+                {
+                    return NotFound(); // Retorna 404 em vez de 403 para não revelar que o registro existe
+                }
             }
 
             return View(movimentacao);
