@@ -95,14 +95,14 @@
 
         </div>
 
-        <!-- Formulário de exclusão -->
-        <form id="form-delete" asp-action="Delete" method="post" class="space-y-4">
-            <input type="hidden" asp-for="Id" />
-            <button type="submit"
-                    class="w-full py-2 px-4 border border-red-600 dark:border-red-500 text-sm font-medium text-red-600 dark:text-red-500 bg-transparent hover:bg-red-600 hover:text-white dark:hover:bg-red-500 dark:hover:text-white rounded transition-colors duration-200">
-                Confirmar Exclusão
-            </button>
-        </form>
+         <!-- Formulário de exclusão -->
+         <form id="delete-form" asp-action="Delete" method="post" class="space-y-4">
+             <input type="hidden" asp-for="Id" />
+             <button type="button" id="open-modal-btn"
+                     class="w-full py-2 px-4 border border-red-600 dark:border-red-500 text-sm font-medium text-red-600 dark:text-red-500 bg-transparent hover:bg-red-600 hover:text-white dark:hover:bg-red-500 dark:hover:text-white rounded transition-colors duration-200">
+                 Confirmar Exclusão
+             </button>
+         </form>
 
         <!-- Link Cancelar -->
         <div class="mt-6 border-t border-gray-100 dark:border-gray-900 pt-4 text-center">
@@ -115,15 +115,36 @@
             </a>
         </div>
 
-    </div>
-</div>
+     </div>
+ </div>
 
-@section Scripts {
-    <script>
-        document.getElementById('form-delete').addEventListener('submit', function (e) {
-            if (!confirm('Tem certeza que deseja excluir este fornecedor? Esta ação não pode ser desfeita.')) {
-                e.preventDefault();
-            }
-        });
-    </script>
-}
+ <!-- Modal de confirmação de exclusão -->
+ <div id="deleteConfirmationModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+     <div class="fixed inset-0 bg-black/50 dark:bg-black/70"></div>
+     <div class="relative w-full max-w-sm mx-4 bg-white dark:bg-gray-950 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 p-6">
+         <h3 class="text-lg font-medium text-black dark:text-white mb-3">Confirmar exclusão</h3>
+         <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
+             Tem certeza que deseja excluir o fornecedor <strong>@Model.Nome</strong>? Esta ação não pode ser desfeita.
+         </p>
+         <div class="flex gap-3">
+             <button type="button" id="cancelDeleteBtn"
+                     class="flex-1 py-2 px-4 border border-gray-300 dark:border-gray-700 text-sm font-medium text-gray-900 dark:text-white bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 rounded transition-colors duration-200">
+                 Cancelar
+             </button>
+             <button type="button" id="confirmDeleteBtn"
+                     class="flex-1 py-2 px-4 border border-red-600 dark:border-red-500 text-sm font-medium text-white bg-red-600 dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-600 rounded transition-colors duration-200">
+                 Excluir
+             </button>
+         </div>
+     </div>
+ </div>
+
+ @section Scripts {
+     <script>
+         const modal = document.getElementById('deleteConfirmationModal');
+         document.getElementById('open-modal-btn').addEventListener('click', () => modal.classList.remove('hidden'));
+         document.getElementById('cancelDeleteBtn').addEventListener('click', () => modal.classList.add('hidden'));
+         document.getElementById('confirmDeleteBtn').addEventListener('click', () => { document.getElementById('delete-form').submit(); });
+         modal.addEventListener('click', e => { if (e.target === modal) modal.classList.add('hidden'); });
+     </script>
+ }
