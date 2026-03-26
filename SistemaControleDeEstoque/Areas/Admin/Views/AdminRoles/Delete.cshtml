@@ -26,7 +26,7 @@
         </div>
 
         <!-- Formulário -->
-        <form asp-action="Delete" method="post" class="space-y-4">
+        <form id="delete-role-form" asp-action="Delete" method="post" class="space-y-4">
             <input type="hidden" asp-for="@Model.Id" />
 
             <!-- Botões -->
@@ -35,7 +35,7 @@
                    class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-700 text-sm font-medium text-gray-900 dark:text-white bg-white dark:bg-gray-950 hover:bg-gray-50 dark:hover:bg-gray-900 rounded transition-colors duration-200 text-center">
                     Cancelar
                 </a>
-                <button type="submit"
+                <button type="button" id="open-modal-btn"
                         class="flex-1 px-4 py-2 border border-red-600 dark:border-red-500 text-sm font-medium text-red-600 dark:text-red-400 bg-transparent hover:bg-red-600 hover:text-white dark:hover:bg-red-500 dark:hover:text-white rounded transition-colors duration-200">
                     Excluir
                 </button>
@@ -43,3 +43,60 @@
         </form>
     </div>
 </div>
+
+<!-- Modal de confirmação final -->
+<div id="deleteConfirmationModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-black/50 dark:bg-black/70"></div>
+    
+    <!-- Modal -->
+    <div class="relative w-full max-w-sm mx-4 bg-white dark:bg-gray-950 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 p-6">
+        <h3 class="text-lg font-medium text-black dark:text-white mb-3">Confirmar exclusão</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
+            Tem certeza que deseja excluir o perfil <strong class="text-black dark:text-white">@Model.Name</strong>? Esta ação não pode ser desfeita.
+        </p>
+        
+        <div class="flex gap-3">
+            <button type="button" id="cancelDeleteBtn"
+                    class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-700 text-sm font-medium text-gray-900 dark:text-white bg-white dark:bg-gray-950 hover:bg-gray-50 dark:hover:bg-gray-900 rounded transition-colors duration-200">
+                Cancelar
+            </button>
+            <button type="button" id="confirmDeleteBtn"
+                    class="flex-1 px-4 py-2 border border-red-600 dark:border-red-500 text-sm font-medium text-red-600 dark:text-red-400 bg-transparent hover:bg-red-600 hover:text-white dark:hover:bg-red-500 dark:hover:text-white rounded transition-colors duration-200">
+                Excluir
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const modal = document.getElementById('deleteConfirmationModal');
+        const openModalBtn = document.getElementById('open-modal-btn');
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        const cancelBtn = document.getElementById('cancelDeleteBtn');
+        const deleteForm = document.getElementById('delete-role-form');
+
+        // Abrir modal
+        openModalBtn.addEventListener('click', function () {
+            modal.classList.remove('hidden');
+        });
+
+        // Cancelar - fecha o modal
+        cancelBtn.addEventListener('click', function () {
+            modal.classList.add('hidden');
+        });
+
+        // Confirmar - submete o form
+        confirmBtn.addEventListener('click', function () {
+            deleteForm.submit();
+        });
+        
+        // Fechar modal ao clicar no backdrop
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    </script>
+}
