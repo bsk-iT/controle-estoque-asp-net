@@ -122,7 +122,7 @@ namespace SistemaControleDeEstoque.Controllers
                         var produto = await _context.Produto.FindAsync(movimentacao.ProdutoId);
                         if (produto != null)
                         {
-                            if (movimentacao.Tipo == "Saída")
+                            if (movimentacao.Tipo == TipoMovimentacao.Saida)
                             {
                                 if (movimentacao.Quantidade > produto.Quantidade)
                                 {
@@ -132,7 +132,7 @@ namespace SistemaControleDeEstoque.Controllers
                                 }
                                 produto.Quantidade -= movimentacao.Quantidade;
                             }
-                            else if (movimentacao.Tipo == "Entrada")
+                            else if (movimentacao.Tipo == TipoMovimentacao.Entrada)
                             {
                                 produto.Quantidade += movimentacao.Quantidade;
                             }

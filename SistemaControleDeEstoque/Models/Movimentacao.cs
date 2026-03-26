@@ -18,11 +18,11 @@ namespace SistemaControleDeEstoque.Models
         public int Id { get; set; }
 
         /// <summary>
-        /// Tipo da movimentação: "Entrada" para adições ao estoque ou "Saída" para retiradas.
+        /// Tipo da movimentação: Entrada para adições ao estoque ou Saida para retiradas.
         /// </summary>
         [Display(Name = "Tipo da Movimentação")]
         [Required(ErrorMessage = "{0} é obrigatório")]
-        public string? Tipo { get; set; }
+        public TipoMovimentacao Tipo { get; set; }
 
         /// <summary>
         /// Quantidade de itens movimentados nesta operação.

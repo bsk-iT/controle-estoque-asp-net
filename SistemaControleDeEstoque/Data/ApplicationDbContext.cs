@@ -25,6 +25,11 @@ namespace SistemaControleDeEstoque.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Configurar enum Tipo como string para compatibilidade com dados existentes
+            modelBuilder.Entity<Movimentacao>()
+                .Property(m => m.Tipo)
+                .HasConversion<string>();
+
             // Configuração da relação muitos-para-muitos via ProdutoFornecedor
             modelBuilder.Entity<ProdutoFornecedor>()
                 .HasOne(pf => pf.Produto)
