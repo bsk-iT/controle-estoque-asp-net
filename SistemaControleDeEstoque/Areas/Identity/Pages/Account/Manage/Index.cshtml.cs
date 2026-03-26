@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -20,8 +21,8 @@ namespace SistemaControleDeEstoque.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
-            [Phone]
             [Display(Name = "Número de telefone")]
+            [RegularExpression(@"^\d{10,11}$", ErrorMessage = "Número de telefone inválido. Informe 10 ou 11 dígitos.")]
             public string NumTelefone { get; set; } = string.Empty;
         }
 
@@ -65,9 +66,13 @@ namespace SistemaControleDeEstoque.Areas.Identity.Pages.Account.Manage
             }
 
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.NumTelefone != phoneNumber)
+
+            // Remove a máscara antes de comparar e salvar — armazena só dígitos (padrão do projeto)
+            var telefoneLimpo = Regex.Replace(Input.NumTelefone ?? string.Empty, @"\D", "");
+
+            if (telefoneLimpo != phoneNumber)
             {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.NumTelefone);
+                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, telefoneLimpo);
                 if (!setPhoneResult.Succeeded)
                 {
                     StatusMessage = "Erro inesperado ao tentar definir o número de telefone.";
