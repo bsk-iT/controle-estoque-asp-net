@@ -157,6 +157,33 @@ td.dataTables_empty {
     font-size: 0.7rem;
 }
 
+/* Paginação light mode — estado normal */
+.dt-paging .dt-paging-button {
+    color: #6b7280 !important;       /* gray-500 */
+    background: transparent !important;
+    border-color: transparent !important;
+}
+
+.dt-paging .dt-paging-button:hover:not(.disabled) {
+    color: #000000 !important;
+    background: #f3f4f6 !important;  /* gray-100 */
+    border-color: #e5e7eb !important; /* gray-200 */
+}
+
+/* Página atual — light mode */
+.dt-paging .dt-paging-button.current,
+.dt-paging .dt-paging-button.current:hover {
+    color: #ffffff !important;
+    background: #000000 !important;
+    border-color: #000000 !important;
+}
+
+/* Desabilitados — light mode */
+.dt-paging .dt-paging-button.disabled,
+.dt-paging .dt-paging-button.disabled:hover {
+    color: #d1d5db !important;       /* gray-300 */
+}
+
 /* Botões de paginação */
 .dark .dt-paging .dt-paging-button {
     color: #d1d5db !important; /* gray-300 */
