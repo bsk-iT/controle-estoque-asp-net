@@ -115,7 +115,7 @@ namespace SistemaControleDeEstoque.Models
         /// </summary>
         [NotMapped]
         [Display(Name = "Tipo de Movimentação")]
-        public TipoMovimentacao? TipoMovimentacao { get; set; }
+        public FiltroTipoMovimentacao? TipoMovimentacao { get; set; }
 
         /// <summary>
         /// Quando verdadeiro, agrupa as movimentações por produto no relatório.
@@ -269,7 +269,7 @@ namespace SistemaControleDeEstoque.Models
     /// <summary>
     /// Define os tipos de movimentação disponíveis para filtros de relatório.
     /// </summary>
-    public enum TipoMovimentacao
+    public enum FiltroTipoMovimentacao
     {
         /// <summary>
         /// Todas as movimentações (entradas e saídas).
