@@ -1,35 +1,60 @@
-﻿@model SistemaControleDeEstoque.Models.ProdutoFornecedor
+@model SistemaControleDeEstoque.Models.ProdutoFornecedor
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes da Associação";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<div class="min-h-[60vh] flex items-center justify-center py-12">
+    <div class="w-full max-w-sm">
+        <!-- Cabeçalho centralizado -->
+        <div class="mb-8 text-center">
+            <p class="text-xs uppercase tracking-widest text-gray-400 dark:text-gray-600 mb-1">inventarii</p>
+            <h1 class="text-2xl font-light text-black dark:text-white tracking-tight"
+                style="font-family: 'Playfair Display', Georgia, serif;">Detalhes da Associação</h1>
+        </div>
 
-<div>
-    <h4>ProdutoFornecedor</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Produto)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Produto.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Fornecedor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Fornecedor.CNPJ)
-        </dd>
-    </dl>
-</div>
-<div>
-    @if (User.IsInRole("Admin") || User.IsInRole("Gerente"))
-    {
-        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
-        <text> | </text>
-    }
-    <a asp-action="Index">Back to List</a>
+        <!-- Campos em lista vertical -->
+        <div class="border border-gray-200 dark:border-gray-800 rounded-lg divide-y divide-gray-100 dark:divide-gray-800 mb-6">
+            <!-- Produto -->
+            <div class="px-6 py-4">
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+                    @Html.DisplayNameFor(model => model.Produto)
+                </p>
+                <p class="text-sm font-medium text-gray-900 dark:text-white">
+                    @Html.DisplayFor(model => model.Produto.Nome)
+                </p>
+            </div>
+            <!-- Fornecedor -->
+            <div class="px-6 py-4">
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+                    @Html.DisplayNameFor(model => model.Fornecedor)
+                </p>
+                <div class="space-y-1">
+                    <p class="text-sm font-medium text-gray-900 dark:text-white">
+                        @Html.DisplayFor(model => model.Fornecedor.Nome)
+                    </p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                        CNPJ: @Html.DisplayFor(model => model.Fornecedor.CNPJ)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão editar -->
+        @if (User.IsInRole("Admin") || User.IsInRole("Gerente"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model?.Id"
+               class="w-full block py-2 px-4 text-center border border-black dark:border-white text-sm font-medium text-black dark:text-white bg-transparent hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded transition-colors duration-200">
+                Editar
+            </a>
+        }
+
+        <!-- Rodapé: link de navegação -->
+        <div class="mt-6 border-t border-gray-100 dark:border-gray-900 pt-4 text-center">
+            <a asp-action="Index" class="text-xs text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-150">
+                Voltar
+            </a>
+        </div>
+    </div>
 </div>

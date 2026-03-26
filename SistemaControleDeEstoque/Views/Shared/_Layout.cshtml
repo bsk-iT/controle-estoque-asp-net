@@ -1,153 +1,192 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br" class="h-full">
 <head>
+    <!-- 1. Anti-FOUC: rodar ANTES de qualquer render para evitar flash de tema errado -->
+    <script>
+        // Versioning: se mudou de versão, reseta para light (limpa localStorage sujo de sessões antigas)
+        if (localStorage.getItem('theme-v') !== '3') {
+            localStorage.removeItem('theme');
+            localStorage.setItem('theme-v', '3');
+        }
+        // Padrão é light — só ativa dark se o usuário escolheu explicitamente
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+        // Sem else: não força remoção aqui para não brigar com a classe do html
+    </script>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SistemaControleDeEstoque</title>
+    <title>@ViewData["Title"] - inventarii</title>
+
+    <!-- Google Fonts: Playfair Display (logo/títulos) + Inter (corpo/nav) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- 2. Tailwind CDN PRIMEIRO — o CDN precisa carregar antes de receber o config -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 3. tailwind.config DEPOIS do CDN — o objeto tailwind já existe, aceita darkMode: 'class' -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        playfair: ['Playfair Display', 'Georgia', 'serif'],
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        };
+    </script>
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css" />
 </head>
-<body class="bg-slate-100 flex flex-col min-h-full">
-    <header class="bg-white shadow">
-        <nav class="mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex">
-                    <div class="flex-shrink-0 flex items-center">
-                        <a asp-area="" asp-controller="Home" asp-action="Index" class="flex items-center">
-                            <!-- Ícone de caixa (com cores atualizadas) -->
-                            <svg class="h-10 w-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Caixa (parte de cima - tampa) -->
-                                <path d="M10 30L50 10L90 30L50 50L10 30Z" fill="#475569" stroke="#334155" stroke-width="3" />
-                                <!-- Caixa (parte principal) -->
-                                <path d="M10 30V70L50 90V50L10 30Z" fill="#334155" stroke="#1e293b" stroke-width="3" />
-                                <path d="M50 50V90L90 70V30L50 50Z" fill="#1e293b" stroke="#0f172a" stroke-width="3" />
-                                <!-- Círculo com verificação -->
-                                <circle cx="75" cy="75" r="22" fill="#F8FAFC" stroke="#0f172a" stroke-width="3" />
-                                <path d="M65 75L72 82L85 68" stroke="#334155" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <span class="ml-2 text-xl font-bold text-slate-800 hidden md:inline">Controle de Estoque</span>
-                        </a>
-                    </div>
-                    <div class="hidden sm:ml-6 sm:flex sm:space-x-4">
-                        <!-- Botões de navegação para as diferentes seções -->
+<body class="bg-gray-50 dark:bg-black flex flex-col min-h-full font-inter transition-colors duration-300">
 
-                        <a asp-area="" asp-controller="Fornecedores" asp-action="Index"
-                           class="border-transparent hover:border-slate-700 text-gray-500 hover:text-slate-800 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
-                            <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                            Fornecedores
-                        </a>
+    <!-- HEADER -->
+    <header class="bg-gray-50 dark:bg-black">
+        <nav class="mx-auto px-6 lg:px-12 max-w-screen-xl">
+            <div class="flex justify-between items-center h-16">
 
-                        <a asp-area="" asp-controller="Produtos" asp-action="Index"
-                           class="border-transparent hover:border-slate-700 text-gray-500 hover:text-slate-800 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
-                            <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m-8-4l8 4m8 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
-                            </svg>
-                            Produtos
-                        </a>
-
-                        <a asp-area="" asp-controller="Movimentacoes" asp-action="Index"
-                           class="border-transparent hover:border-slate-700 text-gray-500 hover:text-slate-800 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
-                            <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                            </svg>
-                            Movimentações
-                        </a>
-
-                        <a asp-area="" asp-controller="Relatorios" asp-action="Index"
-                           class="border-transparent hover:border-slate-700 text-gray-500 hover:text-slate-800 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200">
-                            <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            Relatórios
-                        </a>
-
-                        <partial name="_LoginAdmin.cshtml" />
-                    </div>
+                <!-- LOGO -->
+                <div class="flex-shrink-0">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="flex items-center gap-2 group">
+                        <img src="~/images/logo-light.png"
+                             alt="inventarii logo"
+                             class="h-8 w-8 object-contain transition-all duration-300 dark:invert" />
+                        <span class="font-playfair text-lg font-medium tracking-tight text-black dark:text-white transition-colors duration-300"
+                              style="font-family: 'Playfair Display', Georgia, serif; letter-spacing: -0.02em;">
+                            inventarii
+                        </span>
+                    </a>
                 </div>
-                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+
+                <!-- NAV LINKS (desktop) -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a asp-area="" asp-controller="Fornecedores" asp-action="Index"
+                       class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
+                        Fornecedores
+                    </a>
+                    <a asp-area="" asp-controller="Produtos" asp-action="Index"
+                       class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
+                        Produtos
+                    </a>
+                    <a asp-area="" asp-controller="Movimentacoes" asp-action="Index"
+                       class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
+                        Movimentações
+                    </a>
+                    <a asp-area="" asp-controller="Relatorios" asp-action="Index"
+                       class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
+                        Relatórios
+                    </a>
+                    <a href="#contato"
+                       class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
+                        Contato
+                    </a>
+                    <!-- Admin (apenas para role Admin) -->
+                    <partial name="_LoginAdmin.cshtml" />
+                </div>
+
+                <!-- ÁREA DIREITA: toggle tema + botões auth -->
+                <div class="hidden md:flex items-center gap-3">
+                    <!-- Botão toggle dark/light: único ícone, inverte no dark -->
+                    <button id="theme-toggle" type="button"
+                            class="p-2 rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors duration-150"
+                            aria-label="Alternar tema">
+                        <img src="~/images/night-mode.png"
+                             alt="Alternar tema"
+                             class="h-5 w-5 object-contain dark:invert" />
+                    </button>
+
                     <partial name="_LoginPartial" />
                 </div>
-                <div class="-mr-2 flex items-center sm:hidden">
-                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-600 hover:text-slate-800 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-slate-700" id="mobile-menu-button" aria-expanded="false">
+
+                <!-- Hamburger (mobile) -->
+                <div class="-mr-2 flex items-center md:hidden">
+                    <button type="button" id="mobile-menu-button"
+                            class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none transition-colors"
+                            aria-expanded="false">
                         <span class="sr-only">Abrir menu</span>
-                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        <svg class="block h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
                 </div>
+
             </div>
-            <!-- Menu mobile (oculto por padrão) -->
-            <div class="sm:hidden hidden" id="mobile-menu">
-                <div class="pt-2 pb-3 space-y-1">
-                    <a asp-area="" asp-controller="Home" asp-action="Index" class="bg-slate-50 border-slate-700 text-slate-800 flex items-center pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                        <!-- Versão menor do mesmo ícone para o menu mobile (com cores atualizadas) -->
-                        <svg class="h-5 w-5 mr-2" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 30L50 10L90 30L50 50L10 30Z" fill="#475569" stroke="#334155" stroke-width="3" />
-                            <path d="M10 30V70L50 90V50L10 30Z" fill="#334155" stroke="#1e293b" stroke-width="3" />
-                            <path d="M50 50V90L90 70V30L50 50Z" fill="#1e293b" stroke="#0f172a" stroke-width="3" />
-                            <circle cx="75" cy="75" r="22" fill="#F8FAFC" stroke="#0f172a" stroke-width="3" />
-                            <path d="M65 75L72 82L85 68" stroke="#334155" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
+
+            <!-- MENU MOBILE -->
+            <div class="md:hidden hidden border-t border-gray-100 dark:border-gray-800" id="mobile-menu">
+                <div class="py-3 space-y-1">
+                    <a asp-area="" asp-controller="Home" asp-action="Index"
+                       class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
                         Home
                     </a>
-
-                    <!-- Links do menu mobile para as diferentes seções -->
-
                     <a asp-area="" asp-controller="Fornecedores" asp-action="Index"
-                       class="border-transparent text-gray-600 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 flex items-center pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                        <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
+                       class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
                         Fornecedores
                     </a>
-
                     <a asp-area="" asp-controller="Produtos" asp-action="Index"
-                       class="border-transparent text-gray-600 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 flex items-center pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                        <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m-8-4l8 4m8 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
-                        </svg>
+                       class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
                         Produtos
                     </a>
-
                     <a asp-area="" asp-controller="Movimentacoes" asp-action="Index"
-                       class="border-transparent text-gray-600 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 flex items-center pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                        <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                        </svg>
+                       class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
                         Movimentações
                     </a>
-
                     <a asp-area="" asp-controller="Relatorios" asp-action="Index"
-                       class="border-transparent text-gray-600 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 flex items-center pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                        <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
+                       class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
                         Relatórios
                     </a>
+                    <a href="#contato"
+                       class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+                        Contato
+                    </a>
                     <partial name="_LoginAdminMobile" />
+                    <!-- Auth mobile -->
+                    <div class="pt-3 pb-2 px-4 border-t border-gray-100 dark:border-gray-800">
+                        <partial name="_LoginPartial" />
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
-        <main>
-            @RenderBody()
-        </main>
+    <!-- CONTEÚDO PRINCIPAL -->
+    @{
+        var mainClass = ViewData["FullHeight"] != null
+            ? "w-full flex-grow flex flex-col overflow-hidden"
+            : "w-full max-w-screen-xl mx-auto px-6 lg:px-12 py-8 flex-grow";
+    }
+    <div class="@mainClass">
+        <main class="@(ViewData["FullHeight"] != null ? "flex-grow flex flex-col" : "")">@RenderBody()</main>
     </div>
 
-    <footer class="bg-white border-t border-slate-200 mt-auto">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-center">
-                <p class="text-sm text-gray-500">
-                    &copy; @DateTime.Now.Year - Sistema de Controle de Estoque - Todos os direitos reservados.
+    <!-- FOOTER -->
+    <footer id="contato" class="bg-gray-50 dark:bg-black border-t border-gray-200 dark:border-gray-800 mt-auto transition-colors duration-300">
+        <div class="max-w-screen-xl mx-auto py-6 px-6 lg:px-12">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <!-- Logo rodapé -->
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="flex items-center gap-2">
+                    <img src="~/images/logo-light.png"
+                         alt="inventarii logo"
+                         class="h-5 w-5 object-contain transition-all duration-300 dark:invert" />
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300" style="font-family: 'Playfair Display', serif;">inventarii</span>
+                </a>
+                <p class="text-xs text-gray-400 dark:text-gray-600">
+                    &copy; @DateTime.Now.Year inventarii - Todos os direitos reservados.
                 </p>
-                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="ml-3 text-slate-700 hover:text-slate-900 flex items-center" title="Política de Privacidade">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                <!-- Ícone de cadeado no lugar de "Privacidade" -->
+                <a asp-area="" asp-controller="Home" asp-action="Privacy"
+                   class="text-gray-400 dark:text-gray-600 hover:text-black dark:hover:text-white transition-colors"
+                   title="Política de Privacidade">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M16.5 10.5V7.125C16.5 4.839 14.661 3 12.375 3h-.75C9.339 3 7.5 4.839 7.5 7.125V10.5M5.25 10.5h13.5A1.5 1.5 0 0 1 20.25 12v7.5A1.5 1.5 0 0 1 18.75 21H5.25A1.5 1.5 0 0 1 3.75 19.5V12A1.5 1.5 0 0 1 5.25 10.5Z" />
                     </svg>
                 </a>
             </div>
@@ -157,13 +196,27 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     <script>
-        // Menu mobile toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        });
+        // ── Mobile menu toggle ──────────────────────────────────────
+        var mobileBtn = document.getElementById('mobile-menu-button');
+        if (mobileBtn) {
+            mobileBtn.addEventListener('click', function () {
+                document.getElementById('mobile-menu').classList.toggle('hidden');
+            });
+        }
+
+        // ── Dark / Light mode toggle ────────────────────────────────
+        var themeBtn = document.getElementById('theme-toggle');
+        if (themeBtn) {
+            themeBtn.addEventListener('click', function () {
+                var html = document.documentElement;
+                var isDark = html.classList.toggle('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+        }
     </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

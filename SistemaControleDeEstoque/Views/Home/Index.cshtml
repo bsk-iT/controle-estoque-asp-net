@@ -1,134 +1,294 @@
-﻿@{
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+
+@{
     ViewData["Title"] = "Home Page";
 
-    // Formatação dos valores
+    // Formatação dos valores (usados apenas quando autenticado)
     var valorEstoqueFormatado = string.Format("{0:C}", ViewBag.ValorTotalEstoque);
-
-    // Determinar cores para variações
-    var classeVariacaoProdutos = ViewBag.VariacaoTotalProdutos >= 0 ? "text-slate-800" : "text-red-600";
-    var classeVariacaoValor = ViewBag.VariacaoValorEstoque >= 0 ? "text-slate-800" : "text-red-600";
+    var classeVariacaoProdutos = ViewBag.VariacaoTotalProdutos >= 0 ? "text-gray-800 dark:text-gray-200" : "text-red-600";
+    var classeVariacaoValor    = ViewBag.VariacaoValorEstoque   >= 0 ? "text-gray-800 dark:text-gray-200" : "text-red-600";
     var simboloVariacaoProdutos = ViewBag.VariacaoTotalProdutos >= 0 ? "+" : "";
-    var simboloVariacaoValor = ViewBag.VariacaoValorEstoque >= 0 ? "+" : "";
+    var simboloVariacaoValor    = ViewBag.VariacaoValorEstoque   >= 0 ? "+" : "";
+
+    // Remover padding/scroll do wrapper principal quando hero estiver visível
+    if (!SignInManager.IsSignedIn(User))
+    {
+        ViewData["FullHeight"] = true;
+    }
 }
 
-<div class="bg-gradient-to-r from-slate-700 to-slate-900 py-12 px-4 sm:px-6 lg:px-8 rounded-lg shadow-lg">
-    <div class="text-center">
-        <h1 class="text-4xl font-extrabold text-slate-50 tracking-tight sm:text-5xl">
-            Sistema de Controle de Estoque
+@if (!SignInManager.IsSignedIn(User))
+{
+    <!-- ══════════════════════════════════════════════════════
+         HERO — visível apenas para visitantes não autenticados
+         Layout 50/50: texto esquerda | ilustração direita
+    ═══════════════════════════════════════════════════════════ -->
+    <section class="flex-grow w-full flex items-start overflow-hidden px-6 lg:px-12 pt-12">
+        <div class="w-full max-w-screen-xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-0 items-center">
+
+            <!-- LADO ESQUERDO: título + animated text + CTA -->
+            <div class="flex flex-col justify-center pr-8">
+
+                <!-- Título hero com efeito animated text cycle -->
+                <h1 class="text-5xl lg:text-6xl font-light text-black dark:text-white leading-tight tracking-tight"
+                    style="font-family: 'Playfair Display', Georgia, serif;">
+                    <!-- Linha 1: prefixo estático -->
+                    <span id="hero-prefix" class="block"></span>
+                    <!-- Linha 2: parte que anima -->
+                    <span class="block mt-1 pb-2">
+                        do seu
+                        <!-- Container do texto animado -->
+                        <span class="text-cycle-outer" style="display: inline-block; position: relative;">
+                            <!-- Div oculto para medir a largura de cada frase -->
+                            <span id="text-measure" aria-hidden="true"
+                                  style="visibility: hidden; position: absolute; white-space: nowrap; pointer-events: none;">
+                            </span>
+                            <!-- Wrapper que anima a largura -->
+                            <span id="text-cycle-wrapper" class="text-cycle-wrapper" style="width: 0; height: 1.3em;">
+                                <span id="text-cycle-current" class="text-cycle-item text-cycle-entering"
+                                      style="font-style: italic; font-weight: 700;"></span>
+                            </span>
+                        </span>
+                    </span>
+                </h1>
+
+                <!-- CTA Primário -->
+                <div class="mt-10 flex flex-col gap-4">
+                    <a asp-area="Identity" asp-page="/Account/Register"
+                       class="inline-flex items-center justify-center w-fit px-8 py-3.5 border border-black dark:border-white text-sm font-medium text-black dark:text-white bg-transparent hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded transition-colors duration-200"
+                       style="min-width: 200px;">
+                        Crie sua conta
+                    </a>
+
+                    <!-- Link secundário -->
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Já é um membro?
+                        <a asp-area="Identity" asp-page="/Account/Login"
+                           class="underline underline-offset-2 text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors">
+                            Entre.
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- LADO DIREITO: Ilustração real extraída do design de referência -->
+            <div class="flex items-center justify-center lg:justify-end">
+                <div class="w-full max-w-lg lg:max-w-none">
+                    <!-- Light mode: ilustração preta em fundo branco -->
+                    <img src="~/images/shelf-light.png"
+                         alt="Ilustração de prateleira de armazém"
+                         class="w-full h-auto max-h-[55vh] object-contain block dark:hidden" />
+                    <!-- Dark mode: ilustração branca em fundo preto -->
+                    <img src="~/images/shelf-dark.png"
+                         alt="Ilustração de prateleira de armazém"
+                         class="w-full h-auto max-h-[55vh] object-contain hidden dark:block" />
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Script do Animated Text Cycle (vanilla JS) -->
+    <script>
+    (function () {
+        // ── Frases que cicam no lugar de "armazém" ──────────────────
+        // Estrutura: { prefix: "A solução para", word: "seu armazém" }
+        // O prefixo altera na primeira linha, a palavra ciclada na segunda
+        const phrases = [
+            { prefix: "O aplicativo parceiro",  word: "armazém"    },
+            { prefix: "Controle total do seu",  word: "estoque"    },
+            { prefix: "Organize de vez o seu",  word: "inventário" },
+            { prefix: "Visibilidade total no",  word: "negócio"    },
+            { prefix: "Gestão inteligente do",  word: "depósito"   },
+        ];
+
+        const prefixEl   = document.getElementById('hero-prefix');
+        const wrapperEl  = document.getElementById('text-cycle-wrapper');
+        const currentEl  = document.getElementById('text-cycle-current');
+        const measureEl  = document.getElementById('text-measure');
+
+        if (!prefixEl || !wrapperEl || !currentEl || !measureEl) return;
+
+        let index   = 0;
+        let running = false;
+
+        // Clona o estilo do texto animado para medir largura com precisão
+        function measureWidth(text) {
+            measureEl.style.fontFamily  = getComputedStyle(currentEl).fontFamily;
+            measureEl.style.fontSize    = getComputedStyle(currentEl).fontSize;
+            measureEl.style.fontWeight  = getComputedStyle(currentEl).fontWeight;
+            measureEl.style.fontStyle   = getComputedStyle(currentEl).fontStyle;
+            measureEl.style.letterSpacing = getComputedStyle(currentEl).letterSpacing;
+            measureEl.textContent = text;
+            return measureEl.getBoundingClientRect().width + 2; // +2px buffer
+        }
+
+        function setPhrase(idx, animate) {
+            const { prefix, word } = phrases[idx];
+
+            // Atualiza prefixo
+            prefixEl.textContent = prefix;
+
+            if (!animate) {
+                // Primeira renderização: sem animação
+                currentEl.textContent = word;
+                currentEl.className = 'text-cycle-item';
+                const w = measureWidth(word);
+                wrapperEl.style.width = w + 'px';
+                // Altura = fonte do elemento pai
+                wrapperEl.style.height = getComputedStyle(wrapperEl.parentElement).lineHeight;
+                return;
+            }
+
+            if (running) return;
+            running = true;
+
+            // 1. Anima saída do item atual
+            currentEl.classList.remove('text-cycle-entering');
+            currentEl.classList.add('text-cycle-exiting');
+
+            setTimeout(function () {
+                // 2. Troca o texto
+                currentEl.textContent = word;
+                const newWidth = measureWidth(word);
+
+                // 3. Anima largura do wrapper (spring via CSS transition)
+                wrapperEl.style.width = newWidth + 'px';
+
+                // 4. Anima entrada do novo texto
+                currentEl.classList.remove('text-cycle-exiting');
+                currentEl.classList.add('text-cycle-entering');
+
+                // Aguarda animação de entrada terminar
+                setTimeout(function () {
+                    currentEl.classList.remove('text-cycle-entering');
+                    running = false;
+                }, 420); // duração de textCycleIn
+
+            }, 320); // duração de textCycleOut
+        }
+
+        // Inicializa sem animação
+        setPhrase(0, false);
+
+        // Cicla a cada 3 segundos (igual ao interval={3000} do componente original)
+        setInterval(function () {
+            index = (index + 1) % phrases.length;
+            setPhrase(index, true);
+        }, 3000);
+    })();
+    </script>
+}
+else
+{
+    <!-- ══════════════════════════════════════════════════════
+         DASHBOARD — visível apenas para usuários autenticados
+    ═══════════════════════════════════════════════════════════ -->
+
+    <!-- Cabeçalho do dashboard -->
+    <div class="mb-8">
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white tracking-tight"
+            style="font-family: 'Playfair Display', serif;">
+            Bem-vindo de volta,
+            <span class="font-normal italic">
+                @(User.Identity?.Name?.Contains('@') == true
+                    ? User.Identity?.Name?.Split('@')[0]
+                    : User.Identity?.Name)
+            </span>
         </h1>
-        <p class="mt-4 text-xl text-slate-200">
-            Gerencie seu inventário com facilidade e precisão
-        </p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Aqui está a visão geral do seu estoque hoje.</p>
     </div>
-</div>
 
-<div class="mt-10">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Card 1 -->
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-slate-800 rounded-md p-3">
-                        <!-- Ícone de caixa/produto -->
-                        <svg class="h-6 w-6 text-slate-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m-8-4l8 4m8 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"></path>
-                        </svg>
-                    </div>
-                    <div class="ml-4">
-                        <h2 class="text-lg font-medium text-gray-900">Produtos</h2>
-                        <p class="mt-1 text-sm text-gray-500">Gerencie seu catálogo de produtos</p>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <a asp-controller="Produtos" asp-action="Index" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-800 hover:bg-slate-900">
-                        Ver produtos
-                    </a>
-                </div>
+    <!-- Cards de ação rápida -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Card Produtos -->
+        <div class="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg p-6 hover:border-black dark:hover:border-white transition-colors duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-medium text-gray-900 dark:text-white">Produtos</h2>
+                <svg class="h-5 w-5 text-gray-400 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m-8-4l8 4m8 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
+                </svg>
             </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Gerencie seu catálogo de produtos</p>
+            <a asp-controller="Produtos" asp-action="Index"
+               class="inline-flex items-center text-sm font-medium text-black dark:text-white border-b border-black dark:border-white hover:opacity-60 transition-opacity">
+                Ver produtos →
+            </a>
         </div>
 
-        <!-- Card 2 -->
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-slate-700 rounded-md p-3">
-                        <!-- Ícone de estatísticas -->
-                        <svg class="h-6 w-6 text-slate-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                    </div>
-                    <div class="ml-4">
-                        <h2 class="text-lg font-medium text-gray-900">Relatórios</h2>
-                        <p class="mt-1 text-sm text-gray-500">Análise e relatórios de estoque</p>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <a asp-controller="Relatorios" asp-action="Index" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-700 hover:bg-slate-800">
-                        Ver relatórios
-                    </a>
-                </div>
+        <!-- Card Relatórios -->
+        <div class="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg p-6 hover:border-black dark:hover:border-white transition-colors duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-medium text-gray-900 dark:text-white">Relatórios</h2>
+                <svg class="h-5 w-5 text-gray-400 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
             </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Análise e relatórios de estoque</p>
+            <a asp-controller="Relatorios" asp-action="Index"
+               class="inline-flex items-center text-sm font-medium text-black dark:text-white border-b border-black dark:border-white hover:opacity-60 transition-opacity">
+                Ver relatórios →
+            </a>
         </div>
 
-        <!-- Card 3 -->
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-slate-600 rounded-md p-3">
-                        <!-- Ícone de alerta -->
-                        <svg class="h-6 w-6 text-slate-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                        </svg>
-                    </div>
-                    <div class="ml-4">
-                        <h2 class="text-lg font-medium text-gray-900">Alertas</h2>
-                        <p class="mt-1 text-sm text-gray-500">Notificações de estoque baixo</p>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <a href="#" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-600 hover:bg-slate-700">
-                        Ver alertas
-                    </a>
-                </div>
+        <!-- Card Alertas -->
+        <div class="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg p-6 hover:border-black dark:hover:border-white transition-colors duration-200">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-medium text-gray-900 dark:text-white">Alertas</h2>
+                <svg class="h-5 w-5 text-gray-400 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
             </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Notificações de estoque baixo</p>
+            <a href="#"
+               class="inline-flex items-center text-sm font-medium text-black dark:text-white border-b border-black dark:border-white hover:opacity-60 transition-opacity">
+                Ver alertas →
+            </a>
         </div>
     </div>
 
-    <div class="mt-10 bg-slate-50 rounded-lg p-6 shadow-sm">
-        <h2 class="text-2xl font-bold text-slate-900 mb-4">Visão Geral do Estoque</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-white p-4 rounded-lg shadow">
-                <p class="text-sm font-medium text-slate-700">Total de Produtos</p>
-                <p class="text-3xl font-bold text-slate-900">@ViewBag.TotalProdutos</p>
-                <div class="mt-1">
-                    <span class="@classeVariacaoProdutos text-sm font-semibold">@simboloVariacaoProdutos@ViewBag.VariacaoTotalProdutos%</span>
-                    <span class="text-gray-500 text-sm"> em relação ao mês passado</span>
+    <!-- Visão Geral do Estoque -->
+    <div class="mt-8 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-5">Visão Geral do Estoque</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Total de Produtos -->
+            <div class="border-l-2 border-black dark:border-white pl-4">
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Total de Produtos</p>
+                <p class="text-3xl font-light text-gray-900 dark:text-white">@ViewBag.TotalProdutos</p>
+                <div class="mt-1 flex items-center gap-1">
+                    <span class="@classeVariacaoProdutos text-xs font-semibold">@simboloVariacaoProdutos@ViewBag.VariacaoTotalProdutos%</span>
+                    <span class="text-gray-400 dark:text-gray-600 text-xs">vs. mês passado</span>
                 </div>
             </div>
-            <div class="bg-white p-4 rounded-lg shadow">
-                <p class="text-sm font-medium text-slate-700">Valor do Estoque</p>
-                <p class="text-3xl font-bold text-slate-900">@valorEstoqueFormatado</p>
-                <div class="mt-1">
-                    <span class="@classeVariacaoValor text-sm font-semibold">@simboloVariacaoValor@ViewBag.VariacaoValorEstoque%</span>
-                    <span class="text-gray-500 text-sm"> em relação ao mês passado</span>
+
+            <!-- Valor do Estoque -->
+            <div class="border-l-2 border-black dark:border-white pl-4">
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Valor do Estoque</p>
+                <p class="text-3xl font-light text-gray-900 dark:text-white">@valorEstoqueFormatado</p>
+                <div class="mt-1 flex items-center gap-1">
+                    <span class="@classeVariacaoValor text-xs font-semibold">@simboloVariacaoValor@ViewBag.VariacaoValorEstoque%</span>
+                    <span class="text-gray-400 dark:text-gray-600 text-xs">vs. mês passado</span>
                 </div>
             </div>
-            <div class="bg-white p-4 rounded-lg shadow">
-                <p class="text-sm font-medium text-slate-700">Itens com Estoque Baixo</p>
-                <p class="text-3xl font-bold text-red-600">@ViewBag.ProdutosEstoqueBaixo</p>
+
+            <!-- Estoque Baixo -->
+            <div class="border-l-2 @(ViewBag.ProdutosEstoqueBaixo > 0 ? "border-red-500" : "border-black dark:border-white") pl-4">
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Estoque Baixo</p>
+                <p class="text-3xl font-light @(ViewBag.ProdutosEstoqueBaixo > 0 ? "text-red-600" : "text-gray-900 dark:text-white")">
+                    @ViewBag.ProdutosEstoqueBaixo
+                </p>
                 <div class="mt-1">
                     @if (ViewBag.ProdutosEstoqueBaixo > 0)
                     {
-                        <span class="text-red-600 text-sm font-semibold">Atenção!</span>
-                        <span class="text-gray-500 text-sm"> Precisam de reposição</span>
+                        <span class="text-red-500 text-xs font-semibold">Atenção — precisam de reposição</span>
                     }
                     else
                     {
-                        <span class="text-slate-700 text-sm font-semibold">Tudo em ordem!</span>
-                        <span class="text-gray-500 text-sm"> Estoque adequado</span>
+                        <span class="text-gray-400 dark:text-gray-600 text-xs">Estoque adequado</span>
                     }
                 </div>
             </div>
         </div>
     </div>
-</div>
+}

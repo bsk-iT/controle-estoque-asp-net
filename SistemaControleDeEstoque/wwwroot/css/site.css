@@ -173,8 +173,8 @@ td.dataTables_empty {
 /* Página atual — light mode */
 .dt-paging .dt-paging-button.current,
 .dt-paging .dt-paging-button.current:hover {
-    color: #ffffff !important;
-    background: #000000 !important;
+    color: #000000 !important;
+    background: transparent !important;
     border-color: #000000 !important;
 }
 
@@ -199,8 +199,8 @@ td.dataTables_empty {
 
 .dark .dt-paging .dt-paging-button.current,
 .dark .dt-paging .dt-paging-button.current:hover {
-    color: #000000 !important;
-    background: #ffffff !important;
+    color: #ffffff !important;
+    background: transparent !important;
     border-color: #ffffff !important;
 }
 

@@ -1,65 +1,91 @@
-﻿@{
+@{
     ViewData["Title"] = "Política de Privacidade";
 }
 
-<div class="bg-white shadow-md rounded-lg overflow-hidden max-w-4xl mx-auto">
-    <div class="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4">
-        <h1 class="text-3xl font-bold text-slate-100">@ViewData["Title"]</h1>
+<div class="max-w-2xl mx-auto space-y-8">
+
+    <!-- Título -->
+    <div>
+        <h1 class="text-3xl font-light text-black dark:text-white tracking-tight"
+            style="font-family: 'Playfair Display', Georgia, serif;">
+            Política de Privacidade
+        </h1>
+        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Última atualização: @DateTime.Now.Year</p>
     </div>
 
-    <div class="p-6 space-y-6">
-        <div class="prose prose-slate max-w-none">
-            <h2 class="text-2xl font-semibold text-slate-900">Sua privacidade é importante para nós</h2>
+    <!-- Seção: Sua privacidade -->
+    <div class="space-y-3">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Sua privacidade é importante para nós</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+            É política do <span class="font-medium text-black dark:text-white" style="font-family: 'Playfair Display', serif;">inventarii</span>
+            respeitar sua privacidade em relação a qualquer informação sua que possamos coletar em nosso sistema
+            e outros sites que possuímos e operamos.
+        </p>
+    </div>
 
-            <p class="text-gray-600 leading-relaxed mt-4">
-                É política do Sistema de Controle de Estoque respeitar sua privacidade em relação a
-                qualquer informação sua que possamos coletar em nosso sistema e outros sites que possuímos e operamos.
+    <!-- Seção: Informações que coletamos -->
+    <div class="space-y-3">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Informações que coletamos</h2>
+        <div class="border-l-2 border-black dark:border-white pl-4">
+            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                Solicitamos informações pessoais apenas quando realmente precisamos delas para lhe fornecer
+                um serviço. Fazemo-lo por meios justos e legais, com o seu conhecimento e consentimento.
             </p>
-
-            <h3 class="text-xl font-semibold text-slate-800 mt-6">Informações que coletamos</h3>
-
-            <div class="bg-slate-50 rounded-md p-4 border-l-4 border-slate-500 mt-3">
-                <p class="text-slate-700">
-                    Solicitamos informações pessoais apenas quando realmente precisamos delas para lhe fornecer
-                    um serviço. Fazemo-lo por meios justos e legais, com o seu conhecimento e consentimento.
-                </p>
-            </div>
-
-            <h3 class="text-xl font-semibold text-slate-800 mt-6">Como usamos suas informações</h3>
-
-            <ul class="list-disc pl-6 space-y-2 mt-3 text-gray-600">
-                <li>Fornecer, operar e manter nosso sistema</li>
-                <li>Melhorar, personalizar e expandir nosso sistema</li>
-                <li>Entender e analisar como você usa nosso sistema</li>
-                <li>Desenvolver novos produtos, serviços, recursos e funcionalidades</li>
-            </ul>
-
-            <h3 class="text-xl font-semibold text-slate-800 mt-6">Segurança de Dados</h3>
-
-            <div class="bg-green-50 rounded-md p-4 border-l-4 border-green-500 mt-3">
-                <p class="text-gray-600">
-                    A segurança de seus dados é importante para nós, mas lembre-se que nenhum método de transmissão
-                    pela Internet ou método de armazenamento eletrônico é 100% seguro. Embora nos esforcemos para usar
-                    meios comercialmente aceitáveis para proteger seus dados pessoais, não podemos garantir sua segurança absoluta.
-                </p>
-            </div>
-
-            <h3 class="text-xl font-semibold text-slate-800 mt-6">Contato</h3>
-
-            <p class="text-gray-600 leading-relaxed mt-3">
-                Se você tiver alguma dúvida sobre como tratamos os dados do usuário e informações pessoais,
-                entre em contato conosco.
-            </p>
-
-            <!-- Notificação de atualização de política dentro do conteúdo (como estava originalmente) -->
-            <div class="mt-8 p-4 bg-slate-50 rounded-lg border border-slate-200 flex items-center">
-                <svg class="h-6 w-6 text-slate-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p class="text-sm text-slate-800">
-                    Esta política de privacidade foi atualizada pela última vez em @DateTime.Now.Year.
-                </p>
-            </div>
         </div>
     </div>
+
+    <!-- Seção: Como usamos -->
+    <div class="space-y-3">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Como usamos suas informações</h2>
+        <ul class="space-y-2">
+            <li class="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
+                <span class="mt-1.5 h-1 w-1 rounded-full bg-black dark:bg-white flex-shrink-0"></span>
+                Fornecer, operar e manter nosso sistema
+            </li>
+            <li class="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
+                <span class="mt-1.5 h-1 w-1 rounded-full bg-black dark:bg-white flex-shrink-0"></span>
+                Melhorar, personalizar e expandir nosso sistema
+            </li>
+            <li class="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
+                <span class="mt-1.5 h-1 w-1 rounded-full bg-black dark:bg-white flex-shrink-0"></span>
+                Entender e analisar como você usa nosso sistema
+            </li>
+            <li class="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
+                <span class="mt-1.5 h-1 w-1 rounded-full bg-black dark:bg-white flex-shrink-0"></span>
+                Desenvolver novos produtos, serviços, recursos e funcionalidades
+            </li>
+        </ul>
+    </div>
+
+    <!-- Seção: Segurança -->
+    <div class="space-y-3">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Segurança de Dados</h2>
+        <div class="border-l-2 border-black dark:border-white pl-4">
+            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                A segurança de seus dados é importante para nós, mas lembre-se que nenhum método de transmissão
+                pela Internet ou método de armazenamento eletrônico é 100% seguro. Embora nos esforcemos para usar
+                meios comercialmente aceitáveis para proteger seus dados pessoais, não podemos garantir sua segurança absoluta.
+            </p>
+        </div>
+    </div>
+
+    <!-- Seção: Contato -->
+    <div class="space-y-3">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Contato</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+            Se você tiver alguma dúvida sobre como tratamos os dados do usuário e informações pessoais,
+            entre em contato conosco.
+        </p>
+    </div>
+
+    <!-- Nota de atualização -->
+    <div class="flex items-center gap-3 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+        <svg class="h-4 w-4 text-gray-400 dark:text-gray-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+        </svg>
+        <p class="text-xs text-gray-500 dark:text-gray-400">
+            Esta política de privacidade foi atualizada pela última vez em @DateTime.Now.Year.
+        </p>
+    </div>
+
 </div>

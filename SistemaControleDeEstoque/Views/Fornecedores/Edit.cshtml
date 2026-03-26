@@ -1,79 +1,86 @@
-﻿@model SistemaControleDeEstoque.Models.Fornecedor
+@model SistemaControleDeEstoque.Models.Fornecedor
 
 @{
     ViewData["Title"] = "Editar Fornecedor";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Cabeçalho -->
-    <div class="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4 rounded-t-lg shadow-md">
-        <div class="flex items-center">
-            <svg class="h-8 w-8 text-slate-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            <h1 class="ml-3 text-2xl font-bold text-slate-100">Editar Fornecedor</h1>
+<div class="min-h-[60vh] flex items-center justify-center py-12">
+    <div class="w-full max-w-sm">
+
+        <!-- Logo -->
+        <div class="mb-8 text-center">
+            <p class="text-xs uppercase tracking-widest text-gray-400 dark:text-gray-600 mb-1">inventarii</p>
+            <h1 class="text-2xl font-light text-black dark:text-white tracking-tight"
+                style="font-family: 'Playfair Display', Georgia, serif;">Editar Fornecedor</h1>
         </div>
-    </div>
 
-    <!-- Conteúdo do formulário -->
-    <div class="bg-white shadow-lg rounded-b-lg p-8">
-        <div class="max-w-2xl mx-auto">
-            <form asp-action="Edit" method="post" class="space-y-6">
-                <!-- Validação -->
-                <div asp-validation-summary="ModelOnly" class="text-sm text-red-600 p-2 bg-red-50 border border-red-200 rounded" role="alert"></div>
+        <!-- Formulário -->
+        <form asp-action="Edit" method="post" class="space-y-4">
 
-                <!-- Campo oculto para o ID -->
-                <input type="hidden" asp-for="Id" />
+            <!-- Erros de validação -->
+            <div asp-validation-summary="ModelOnly"
+                 class="text-sm text-red-600 dark:text-red-400 p-3 border border-red-300 dark:border-red-700 rounded-md"
+                 role="alert"></div>
 
-                <!-- Grid de campos -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Nome -->
-                    <div>
-                        <label asp-for="Nome" class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-                        <input asp-for="Nome" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
-                        <span asp-validation-for="Nome" class="text-sm text-red-600"></span>
-                    </div>
+            <input type="hidden" asp-for="Id" />
 
-                    <!-- CNPJ -->
-                    <div>
-                        <label asp-for="CNPJ" class="block text-sm font-medium text-gray-700 mb-1">CNPJ</label>
-                        <input asp-for="CNPJ" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
-                        <span asp-validation-for="CNPJ" class="text-sm text-red-600"></span>
-                    </div>
+            <!-- Grid de campos -->
+            <div class="grid grid-cols-1 gap-4">
 
-                    <!-- E-mail -->
-                    <div>
-                        <label asp-for="Email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-                        <input asp-for="Email" type="email" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
-                        <span asp-validation-for="Email" class="text-sm text-red-600"></span>
-                    </div>
-
-                    <!-- Telefone -->
-                    <div>
-                        <label asp-for="Telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
-                        <input asp-for="Telefone" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500" />
-                        <span asp-validation-for="Telefone" class="text-sm text-red-600"></span>
-                    </div>
+                <!-- Nome -->
+                <div>
+                    <label asp-for="Nome" class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1"></label>
+                    <input asp-for="Nome"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-colors duration-150" />
+                    <span asp-validation-for="Nome" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
                 </div>
 
-                <!-- Botões -->
-                <div class="flex justify-between pt-4">
-                    <a asp-action="Index" class="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-800 bg-white hover:bg-slate-50">
-                        <svg class="-ml-1 mr-2 h-5 w-5 text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        Voltar
-                    </a>
-                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
-                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        Salvar Alterações
-                    </button>
+                <!-- CNPJ -->
+                <div>
+                    <label asp-for="CNPJ" class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1"></label>
+                    <input asp-for="CNPJ"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-colors duration-150" />
+                    <span asp-validation-for="CNPJ" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
                 </div>
-            </form>
+
+                <!-- Email -->
+                <div>
+                    <label asp-for="Email" class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1"></label>
+                    <input asp-for="Email" type="email"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-colors duration-150" />
+                    <span asp-validation-for="Email" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
+                </div>
+
+                <!-- Telefone -->
+                <div>
+                    <label asp-for="Telefone" class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1"></label>
+                    <input asp-for="Telefone"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-colors duration-150" />
+                    <span asp-validation-for="Telefone" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
+                </div>
+
+            </div>
+
+            <!-- Botão -->
+            <button type="submit"
+                    class="w-full py-2 px-4 border border-black dark:border-white text-sm font-medium text-black dark:text-white bg-transparent hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded transition-colors duration-200">
+                Salvar Alterações
+            </button>
+
+        </form>
+
+        <!-- Link Voltar -->
+        <div class="mt-6 border-t border-gray-100 dark:border-gray-900 pt-4 text-center">
+            <a asp-action="Index"
+               class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                Voltar para Fornecedores
+            </a>
         </div>
+
     </div>
 </div>
 
