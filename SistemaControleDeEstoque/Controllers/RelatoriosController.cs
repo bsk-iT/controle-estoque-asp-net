@@ -117,6 +117,7 @@ namespace SistemaControleDeEstoque.Controllers
         // POST: Relatorios/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireUserAdminGerenteRole")]
         public async Task<IActionResult> Create([Bind("Id,Tipo,DataGeracao,UsuarioGerador,DataInicio,DataFim,FornecedorId,ProdutoId,IncluirProdutosZerados,Ordenacao,ApenasAbaixoDoMinimo,TipoMovimentacao,Resumido")] Relatorio relatorio)
         {
             // Garantir que o usuário gerador seja o usuário logado
@@ -172,6 +173,7 @@ namespace SistemaControleDeEstoque.Controllers
         // POST: Relatorios/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Gerente")]
         public IActionResult Edit(int id, [Bind("Id,Tipo,DataGeracao,UsuarioGerador")] Relatorio relatorio)
         {
             // Redirecionar para detalhes ou index com mensagem informativa
@@ -201,6 +203,7 @@ namespace SistemaControleDeEstoque.Controllers
         // POST: Relatorios/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var relatorio = await _context.Relatorio.FindAsync(id);
