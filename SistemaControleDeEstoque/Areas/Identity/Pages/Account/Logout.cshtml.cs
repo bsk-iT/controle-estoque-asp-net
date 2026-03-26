@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SistemaControleDeEstoque.Areas.Identity.Pages.Account
 {
+    [AllowAnonymous]
     public class LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger) : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager = signInManager;

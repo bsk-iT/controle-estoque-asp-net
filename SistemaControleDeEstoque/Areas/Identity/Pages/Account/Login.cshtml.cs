@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SistemaControleDeEstoque.Areas.Identity.Pages.Account
 {
+    [AllowAnonymous]
     public class LoginModel : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
