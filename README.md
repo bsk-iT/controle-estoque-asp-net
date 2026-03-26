@@ -23,22 +23,59 @@ Um aplicativo web completo desenvolvido em ASP.NET Core Razor Pages para control
 ## Como executar o projeto
 
 1. Clone este repositório
-2. Configure a string de conexão no arquivo appsettings.json
+
+2. Crie o arquivo `appsettings.Development.json` na raiz do projeto `SistemaControleDeEstoque/` com o seguinte conteúdo:
+   ```json
+   {
+     "ConnectionStrings": {
+       "DefaultConnection": "Server=localhost;Database=controle_estoque;Trusted_Connection=true;TrustServerCertificate=true"
+     },
+     "Serilog": {
+       "MinimumLevel": {
+         "Default": "Debug",
+         "Override": {
+           "Microsoft": "Information",
+           "Microsoft.AspNetCore": "Information",
+           "Microsoft.EntityFrameworkCore": "Information",
+           "System": "Information"
+         }
+       }
+     },
+     "Logging": {
+       "LogLevel": {
+         "Default": "Information",
+         "Microsoft.AspNetCore": "Warning"
+       }
+     },
+     "SeedUsers": {
+       "UserPassword": "SuaSenha#1234",
+       "GerentePassword": "SuaSenha#5678",
+       "AdminPassword": "SuaSenha#9999"
+     }
+   }
+   ```
+   
+   **Nota:** Ajuste as senhas conforme desejado. Certifique-se de que o SQL Server está rodando localmente e que o banco de dados pode ser criado automaticamente pela migration.
+
 3. Execute as migrations: `dotnet ef database update`
+
 4. Execute o projeto: `dotnet run`
 
 ## Credenciais para teste
 
-O sistema possui três níveis de acesso para demonstração:
+O sistema possui três níveis de acesso para demonstração. As senhas padrão são definidas no arquivo `appsettings.Development.json`:
 
 - **Administrador**: 
   - Email: admin@localhost
+  - Senha padrão: `SuaSenha#9999` (configurável no `appsettings.Development.json`)
 
 - **Gerente**: 
   - Email: gerente@localhost
+  - Senha padrão: `SuaSenha#5678` (configurável no `appsettings.Development.json`)
 
 - **Usuário**: 
   - Email: usuario@localhost
+  - Senha padrão: `SuaSenha#1234` (configurável no `appsettings.Development.json`)
 
 Cada nível possui permissões diferentes para demonstrar o controle de acesso baseado em perfis.
 
