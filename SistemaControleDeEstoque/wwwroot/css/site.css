@@ -11,6 +11,21 @@ html {
     }
 }
 
+/* ── Cor de fundo base — independente do Tailwind CDN ───────────
+   O site.css carrega antes do CDN. Combinado com o script anti-FOUC
+   que aplica .dark no <html> antes de qualquer render, isso garante
+   que o fundo correto está disponível desde o primeiro pixel pintado,
+   eliminando o flash branco ao navegar entre páginas no dark mode.
+   ─────────────────────────────────────────────────────────────── */
+html, body {
+    background-color: #f9fafb; /* gray-50 — light mode */
+}
+
+html.dark,
+html.dark body {
+    background-color: #000000; /* black — dark mode */
+}
+
 /* ── Body margin reset ───────────────────────────────────────── */
 body {
     margin-bottom: 0;
