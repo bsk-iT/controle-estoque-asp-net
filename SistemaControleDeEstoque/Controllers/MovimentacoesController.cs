@@ -84,20 +84,16 @@ namespace SistemaControleDeEstoque.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "RequireUserAdminGerenteRole")]
-        public async Task<IActionResult> Create([Bind("Id,Tipo,Quantidade,DataMovimentacao,ProdutoId,UsuarioId,UsuarioNome")] Movimentacao movimentacao)
+        public async Task<IActionResult> Create([Bind("Tipo,Quantidade,ProdutoId")] Movimentacao movimentacao)
         {
+            // Sempre sobrescrever usuário autenticado (previne overposting)
+            var user = await _userManager.GetUserAsync(User);
+            movimentacao.UsuarioId = user!.Id;
+            movimentacao.UsuarioNome = user.UserName;
+            movimentacao.DataMovimentacao = DateTime.UtcNow;
+
             if (ModelState.IsValid)
             {
-                // Se não foi enviado um usuário, garantir que seja o atual
-                if (string.IsNullOrEmpty(movimentacao.UsuarioId))
-                {
-                    var user = await _userManager.GetUserAsync(User);
-                    if (user != null)
-                    {
-                        movimentacao.UsuarioId = user.Id;
-                        movimentacao.UsuarioNome = user.UserName;
-                    }
-                }
 
                 await using var transaction = await _context.Database.BeginTransactionAsync();
                 try

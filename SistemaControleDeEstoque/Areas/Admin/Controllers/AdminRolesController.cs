@@ -26,6 +26,7 @@ namespace SistemaControleDeEstoque.Areas.Admin.Controllers
     public IActionResult Create() => View();
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Required] string name)
         {
             if (ModelState.IsValid)
@@ -71,6 +72,7 @@ namespace SistemaControleDeEstoque.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(RoleModification model)
         {
             IdentityResult result;
