@@ -126,7 +126,7 @@ namespace SistemaControleDeEstoque.Models
 
         #endregion
 
-        #region Validações e lógica de negócio
+        #region Validações
 
         /// <summary>
         /// Valida se a Data Fim é posterior ou igual à Data Início.
@@ -166,47 +166,6 @@ namespace SistemaControleDeEstoque.Models
             }
 
             return results;
-        }
-
-        /// <summary>
-        /// Gera o relatório com base no tipo selecionado e parâmetros configurados.
-        /// </summary>
-        /// <returns>String contendo o resultado do relatório</returns>
-        /// <exception cref="NotImplementedException">Lançada se o tipo de relatório não for suportado</exception>
-        public string GerarRelatorio()
-        {
-            return Tipo switch
-            {
-                TipoRelatorio.Estoque => GerarRelatorioEstoque(),
-                TipoRelatorio.Movimentacoes => GerarRelatorioMovimentacoes(),
-                _ => throw new NotImplementedException("Tipo de relatório não suportado")
-            };
-        }
-
-        /// <summary>
-        /// Gera um relatório detalhado do estoque atual.
-        /// </summary>
-        /// <returns>String formatada com os dados do relatório</returns>
-        private string GerarRelatorioEstoque()
-        {
-            // Implementar lógica para gerar relatório de estoque
-            // Apenas uma implementação de exemplo
-            return $"Relatório de Estoque gerado em {DateTime.UtcNow}";
-        }
-
-        /// <summary>
-        /// Gera um relatório de movimentações do estoque com base nos filtros configurados.
-        /// </summary>
-        /// <returns>String formatada com os dados do relatório</returns>
-        private string GerarRelatorioMovimentacoes()
-        {
-            // Implementar lógica para gerar relatório de movimentações
-            // Apenas uma implementação de exemplo
-            string periodo = DataInicio.HasValue && DataFim.HasValue
-                ? $" no período de {DataInicio.Value:dd/MM/yyyy} até {DataFim.Value:dd/MM/yyyy}"
-                : "";
-
-            return $"Relatório de Movimentações{periodo} gerado em {DateTime.UtcNow}";
         }
 
         #endregion
