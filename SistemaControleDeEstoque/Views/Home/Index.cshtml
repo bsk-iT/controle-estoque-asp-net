@@ -37,7 +37,8 @@
                     <span id="hero-prefix" class="block"></span>
                     <!-- Linha 2: parte que anima -->
                     <span class="block mt-1 pb-2">
-                        do seu
+                        <!-- Prefixo opcional da linha 2 -->
+                        <span id="hero-prefix2" class="inline"></span>
                         <!-- Container do texto animado -->
                         <span class="text-cycle-outer" style="display: inline-block; position: relative;">
                             <!-- Div oculto para medir a largura de cada frase -->
@@ -89,46 +90,47 @@
         </div>
     </section>
 
-    <!-- Script do Animated Text Cycle (vanilla JS) -->
-    <script>
-    (function () {
-        // ── Frases que cicam no lugar de "armazém" ──────────────────
-        // Estrutura: { prefix: "A solução para", word: "seu armazém" }
-        // O prefixo altera na primeira linha, a palavra ciclada na segunda
-        const phrases = [
-            { prefix: "O aplicativo parceiro",  word: "armazém"    },
-            { prefix: "Controle total do seu",  word: "estoque"    },
-            { prefix: "Organize de vez o seu",  word: "inventário" },
-            { prefix: "Visibilidade total no",  word: "negócio"    },
-            { prefix: "Gestão inteligente do",  word: "depósito"   },
-        ];
+     <!-- Script do Animated Text Cycle (vanilla JS) -->
+     <script>
+     (function () {
+         // ── Frases que cicam no lugar de "armazém" ──────────────────
+         // Estrutura: { prefix: "Linha 1", prefix2: "Linha 2 antes da palavra", word: "palavra animada" }
+         const phrases = [
+             { prefix: "O aplicativo parceiro",  prefix2: "do seu",  word: "armazém"    },
+             { prefix: "Controle total",  prefix2: "do seu",  word: "estoque"    },
+             { prefix: "Organize de vez",  prefix2: "o seu",  word: "inventário" },
+             { prefix: "Visibilidade total",  prefix2: "do",  word: "negócio"    },
+             { prefix: "Gestão inteligente",  prefix2: "do",  word: "depósito"   },
+         ];
 
-        const prefixEl   = document.getElementById('hero-prefix');
-        const wrapperEl  = document.getElementById('text-cycle-wrapper');
-        const currentEl  = document.getElementById('text-cycle-current');
-        const measureEl  = document.getElementById('text-measure');
+         const prefixEl   = document.getElementById('hero-prefix');
+         const prefix2El  = document.getElementById('hero-prefix2');
+         const wrapperEl  = document.getElementById('text-cycle-wrapper');
+         const currentEl  = document.getElementById('text-cycle-current');
+         const measureEl  = document.getElementById('text-measure');
 
-        if (!prefixEl || !wrapperEl || !currentEl || !measureEl) return;
+         if (!prefixEl || !prefix2El || !wrapperEl || !currentEl || !measureEl) return;
 
-        let index   = 0;
-        let running = false;
+         let index   = 0;
+         let running = false;
 
-        // Clona o estilo do texto animado para medir largura com precisão
-        function measureWidth(text) {
-            measureEl.style.fontFamily  = getComputedStyle(currentEl).fontFamily;
-            measureEl.style.fontSize    = getComputedStyle(currentEl).fontSize;
-            measureEl.style.fontWeight  = getComputedStyle(currentEl).fontWeight;
-            measureEl.style.fontStyle   = getComputedStyle(currentEl).fontStyle;
-            measureEl.style.letterSpacing = getComputedStyle(currentEl).letterSpacing;
-            measureEl.textContent = text;
-            return measureEl.getBoundingClientRect().width + 2; // +2px buffer
-        }
+         // Clona o estilo do texto animado para medir largura com precisão
+         function measureWidth(text) {
+             measureEl.style.fontFamily  = getComputedStyle(currentEl).fontFamily;
+             measureEl.style.fontSize    = getComputedStyle(currentEl).fontSize;
+             measureEl.style.fontWeight  = getComputedStyle(currentEl).fontWeight;
+             measureEl.style.fontStyle   = getComputedStyle(currentEl).fontStyle;
+             measureEl.style.letterSpacing = getComputedStyle(currentEl).letterSpacing;
+             measureEl.textContent = text;
+             return measureEl.getBoundingClientRect().width + 2; // +2px buffer
+         }
 
-        function setPhrase(idx, animate) {
-            const { prefix, word } = phrases[idx];
+         function setPhrase(idx, animate) {
+             const { prefix, prefix2, word } = phrases[idx];
 
-            // Atualiza prefixo
-            prefixEl.textContent = prefix;
+             // Atualiza prefixos
+             prefixEl.textContent = prefix;
+             prefix2El.textContent = prefix2 ? prefix2 + " " : "";
 
             if (!animate) {
                 // Primeira renderização: sem animação
