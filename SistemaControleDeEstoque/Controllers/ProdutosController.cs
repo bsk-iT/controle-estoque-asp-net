@@ -124,7 +124,7 @@ namespace SistemaControleDeEstoque.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProdutoExists(produto.Id))
+                    if (!await ProdutoExistsAsync(produto.Id))
                     {
                         return NotFound();
                     }
@@ -176,9 +176,9 @@ namespace SistemaControleDeEstoque.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProdutoExists(int id)
+        private async Task<bool> ProdutoExistsAsync(int id)
         {
-            return _context.Produto.Any(e => e.Id == id);
+            return await _context.Produto.AnyAsync(e => e.Id == id);
         }
     }
 }

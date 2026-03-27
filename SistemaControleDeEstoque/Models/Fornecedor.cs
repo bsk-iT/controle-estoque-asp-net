@@ -42,6 +42,7 @@ namespace SistemaControleDeEstoque.Models
         [Display(Name = "E-mail")]
         [Required(ErrorMessage = "{0} é obrigatório")]
         [DataType(DataType.EmailAddress)]
+        [EmailAddress(ErrorMessage = "E-mail inválido")]
         public string Email { get => email; set => email = value; }
 
         /// <summary>

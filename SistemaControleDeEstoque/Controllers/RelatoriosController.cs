@@ -235,9 +235,9 @@ namespace SistemaControleDeEstoque.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RelatorioExists(int id)
+        private async Task<bool> RelatorioExistsAsync(int id)
         {
-            return _context.Relatorio.Any(e => e.Id == id);
+            return await _context.Relatorio.AnyAsync(e => e.Id == id);
         }
     }
 }

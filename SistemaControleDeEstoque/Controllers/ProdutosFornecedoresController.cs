@@ -29,6 +29,7 @@ namespace SistemaControleDeEstoque.Controllers
         }
 
         // GET: ProdutosFornecedores/Details/5
+        [Authorize(Policy = "RequireUserAdminGerenteRole")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -117,7 +118,7 @@ namespace SistemaControleDeEstoque.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProdutoFornecedorExists(produtoFornecedor.Id))
+                    if (!await ProdutoFornecedorExistsAsync(produtoFornecedor.Id))
                     {
                         return NotFound();
                     }
@@ -170,9 +171,9 @@ namespace SistemaControleDeEstoque.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProdutoFornecedorExists(int id)
+        private async Task<bool> ProdutoFornecedorExistsAsync(int id)
         {
-            return _context.ProdutoFornecedor.Any(e => e.Id == id);
+            return await _context.ProdutoFornecedor.AnyAsync(e => e.Id == id);
         }
     }
 }

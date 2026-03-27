@@ -105,7 +105,7 @@ namespace SistemaControleDeEstoque.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FornecedorExists(fornecedor.Id))
+                    if (!await FornecedorExistsAsync(fornecedor.Id))
                     {
                         return NotFound();
                     }
@@ -154,9 +154,9 @@ namespace SistemaControleDeEstoque.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool FornecedorExists(int id)
+        private async Task<bool> FornecedorExistsAsync(int id)
         {
-            return _context.Fornecedor.Any(e => e.Id == id);
+            return await _context.Fornecedor.AnyAsync(e => e.Id == id);
         }
     }
 }

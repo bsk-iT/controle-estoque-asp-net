@@ -112,7 +112,6 @@ namespace SistemaControleDeEstoque.Controllers
 
             if (ModelState.IsValid)
             {
-
                 await using var transaction = await _context.Database.BeginTransactionAsync();
                 try
                 {
@@ -128,7 +127,7 @@ namespace SistemaControleDeEstoque.Controllers
                                 {
                                     ModelState.AddModelError("Quantidade", $"Quantidade solicitada ({movimentacao.Quantidade}) excede o estoque disponível ({produto.Quantidade}).");
                                     await transaction.RollbackAsync();
-                                    goto ValidationFailed;
+                                    return await RecarregarViewCreate(movimentacao);
                                 }
                                 produto.Quantidade -= movimentacao.Quantidade;
                             }
@@ -152,8 +151,14 @@ namespace SistemaControleDeEstoque.Controllers
                 }
             }
 
-            ValidationFailed:
-            // Se chegou aqui, é porque houve erro de validação, recarregar dados para a view
+            return await RecarregarViewCreate(movimentacao);
+        }
+
+        /// <summary>
+        /// Recarrega os dados necessários para exibir a view de criação de movimentação.
+        /// </summary>
+        private async Task<IActionResult> RecarregarViewCreate(Movimentacao movimentacao)
+        {
             ViewData["ProdutoId"] = new SelectList(_context.Produto, "Id", "Nome", movimentacao.ProdutoId);
             var produtosQuantidades = await _context.Produto
                 .ToDictionaryAsync(p => p.Id, p => p.Quantidade);
@@ -215,9 +220,9 @@ namespace SistemaControleDeEstoque.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MovimentacaoExists(int id)
+        private async Task<bool> MovimentacaoExistsAsync(int id)
         {
-            return _context.Movimentacao.Any(e => e.Id == id);
+            return await _context.Movimentacao.AnyAsync(e => e.Id == id);
         }
 
         // Método para obter o estoque de um produto pelo ID (para chamadas AJAX)
