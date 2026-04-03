@@ -156,6 +156,18 @@
         produtoSelect.addEventListener('change', validarQuantidade);
         quantidadeInput.addEventListener('input', validarQuantidade);
 
+        // Sobrescrever mensagem HTML5 nativa do browser em PT-BR
+        quantidadeInput.addEventListener('invalid', function () {
+            if (this.validity.rangeUnderflow) {
+                this.setCustomValidity('Por favor, insira um valor maior ou igual a 1.');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+        quantidadeInput.addEventListener('input', function () {
+            this.setCustomValidity('');
+        });
+
         document.addEventListener('DOMContentLoaded', validarQuantidade);
 
         document.querySelector('form').addEventListener('submit', function(e) {

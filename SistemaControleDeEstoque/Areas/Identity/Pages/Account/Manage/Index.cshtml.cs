@@ -22,6 +22,7 @@ namespace SistemaControleDeEstoque.Areas.Identity.Pages.Account.Manage
         public class InputModel
         {
             [Display(Name = "Número de telefone")]
+            [Required(ErrorMessage = "O campo {0} é obrigatório")]
             [RegularExpression(@"^\d{10,11}$", ErrorMessage = "Número de telefone inválido. Informe 10 ou 11 dígitos.")]
             public string NumTelefone { get; set; } = string.Empty;
         }

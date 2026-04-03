@@ -45,8 +45,8 @@ namespace SistemaControleDeEstoque.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "O campo {0} é obrigatório")]
+            [EmailAddress(ErrorMessage = "Email inválido")]
             public string Email { get; set; }
         }
 
