@@ -194,7 +194,8 @@ publish/
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
-# Apenas o .user (contém senha) é ignorado; o .pubxml em si vai para o repositório
+# Ignorar arquivos de publicação do MSBuild (.pubxml.user contém senhas de deploy)
+# Diretório inteiro PublishProfiles/ é ignorado na linha 383
 *.pubxml.user
 *.publishproj
 
