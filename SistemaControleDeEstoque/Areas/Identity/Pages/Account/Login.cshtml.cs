@@ -94,7 +94,16 @@ namespace SistemaControleDeEstoque.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    // Tentar detectar se é erro de email não confirmado
+                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+                    if (user != null && !await _signInManager.UserManager.IsEmailConfirmedAsync(user))
+                    {
+                        ModelState.AddModelError(string.Empty, "Confirme seu e-mail antes de fazer login. Verifique sua caixa de entrada.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "E-mail ou senha inválidos.");
+                    }
                     return Page();
                 }
             }

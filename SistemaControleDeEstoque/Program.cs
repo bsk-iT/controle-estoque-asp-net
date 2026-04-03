@@ -50,7 +50,7 @@ try
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     }
 
-    builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+    builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddErrorDescriber<TraduzirErrosIdentity>()
         .AddDefaultTokenProviders();
@@ -73,7 +73,7 @@ try
     {
         options.Password.RequireDigit = true;
         options.Password.RequireLowercase = true;
-        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireNonAlphanumeric = true;
         options.Password.RequireUppercase = true;
         options.Password.RequiredLength = 8;
         options.Password.RequiredUniqueChars = 1;
@@ -101,6 +101,8 @@ try
 
     builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
 
+    // EmailSender com MailKit/SMTP Gmail — configure via User Secrets (dev) ou variáveis de ambiente (prod):
+    //   dotnet user-secrets set "Smtp:Password" "xxxx xxxx xxxx xxxx"
     builder.Services.AddTransient<IEmailSender, EmailSender>();
 
     var app = builder.Build();

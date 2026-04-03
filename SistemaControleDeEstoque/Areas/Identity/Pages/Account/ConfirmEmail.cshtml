@@ -1,0 +1,85 @@
+@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Confirmar e-mail";
+}
+
+<div class="min-h-[60vh] flex items-center justify-center py-12">
+    <div class="w-full max-w-sm">
+
+        <!-- Cabeçalho -->
+        <div class="mb-8">
+            <p class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">inventarii</p>
+            <h1 class="text-2xl font-light text-black dark:text-white tracking-tight"
+                style="font-family: 'Playfair Display', Georgia, serif;">Confirmação de e-mail</h1>
+        </div>
+
+        <!-- Mensagem de status -->
+        @if (!string.IsNullOrEmpty(Model.StatusMessage))
+        {
+            @if (Model.StatusMessage.StartsWith("Sucesso"))
+            {
+                <!-- Sucesso -->
+                <div class="border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 rounded-lg p-6 mb-6">
+                    <div class="flex items-start gap-3">
+                        <div class="flex-shrink-0 mt-0.5">
+                            <svg class="h-5 w-5 text-green-600 dark:text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-green-900 dark:text-green-100">
+                                E-mail confirmado com sucesso!
+                            </h3>
+                            <p class="mt-1 text-sm text-green-800 dark:text-green-200">
+                                Sua conta está ativa. Agora você pode fazer login com suas credenciais.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botão de ação -->
+                <a asp-page="./Login"
+                   class="w-full block text-center px-4 py-2 border border-black dark:border-white text-sm font-medium text-black dark:text-white bg-transparent hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded transition-colors duration-200 mb-3">
+                    Fazer login
+                </a>
+            }
+            else
+            {
+                <!-- Erro -->
+                <div class="border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30 rounded-lg p-6 mb-6">
+                    <div class="flex items-start gap-3">
+                        <div class="flex-shrink-0 mt-0.5">
+                            <svg class="h-5 w-5 text-red-600 dark:text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-red-900 dark:text-red-100">
+                                Erro ao confirmar e-mail
+                            </h3>
+                            <p class="mt-1 text-sm text-red-800 dark:text-red-200">
+                                @Html.Raw(Model.StatusMessage)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botão de voltar -->
+                <a asp-page="./ForgotPassword"
+                   class="w-full block text-center px-4 py-2 border border-gray-300 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-900 rounded transition-colors duration-200 mb-3">
+                    Solicitar novo link
+                </a>
+            }
+        }
+
+        <!-- Link de voltar -->
+        <div class="text-center">
+            <a asp-page="./Login"
+               class="text-sm text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-150">
+                ← Voltar para login
+            </a>
+        </div>
+
+    </div>
+</div>

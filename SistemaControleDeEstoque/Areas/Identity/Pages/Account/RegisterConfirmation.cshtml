@@ -1,0 +1,61 @@
+@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Verifique seu e-mail";
+}
+
+<div class="min-h-[60vh] flex items-center justify-center py-12">
+    <div class="w-full max-w-sm">
+
+        <!-- Cabeçalho -->
+        <div class="mb-8">
+            <p class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">inventarii</p>
+            <h1 class="text-2xl font-light text-black dark:text-white tracking-tight"
+                style="font-family: 'Playfair Display', Georgia, serif;">Verifique seu e-mail</h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Quase lá - ative sua conta confirmando seu endereço.</p>
+        </div>
+
+        <!-- Card de confirmação -->
+        <div class="border border-gray-200 dark:border-gray-800 rounded-lg p-6 mb-6">
+            <p class="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                Um link de confirmação foi enviado para:
+            </p>
+            <p class="text-sm font-medium text-black dark:text-white break-all mb-4">
+                @Model.Email
+            </p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                Clique no link no e-mail para ativar sua conta. O link expira em 24 horas.
+            </p>
+        </div>
+
+        <!-- Aviso de spam -->
+        <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-6">
+            <p class="text-xs text-amber-900 dark:text-amber-100 leading-relaxed">
+                <strong>Não recebeu o e-mail?</strong> Verifique a pasta de <strong>spam</strong> ou <strong>promoções</strong>. Às vezes, o e-mail de confirmação vai parar lá.
+            </p>
+        </div>
+
+        <!-- Links de ação -->
+        <div class="space-y-3">
+            <!-- Voltar para login -->
+            <a asp-page="./Login"
+               class="block w-full text-center px-4 py-2 border border-black dark:border-white text-sm font-medium text-black dark:text-white bg-transparent hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded transition-colors duration-200">
+                Voltar para login
+            </a>
+
+            <!-- Criar nova conta -->
+            <a asp-page="./Register"
+               class="block w-full text-center px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors duration-150">
+                Criar outra conta
+            </a>
+        </div>
+
+        <!-- Nota de segurança no rodapé -->
+        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800">
+            <p class="text-xs text-gray-400 dark:text-gray-600 text-center leading-relaxed">
+                Por segurança, o link de confirmação é pessoal e não pode ser compartilhado.
+            </p>
+        </div>
+
+    </div>
+</div>
