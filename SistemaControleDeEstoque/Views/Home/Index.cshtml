@@ -87,103 +87,11 @@
                 </div>
             </div>
 
-        </div>
-    </section>
-
-     <!-- Script do Animated Text Cycle (vanilla JS) -->
-     <script>
-     (function () {
-         // ── Frases que cicam no lugar de "armazém" ──────────────────
-         // Estrutura: { prefix: "Linha 1", prefix2: "Linha 2 antes da palavra", word: "palavra animada" }
-         const phrases = [
-             { prefix: "O aplicativo parceiro",  prefix2: "do seu",  word: "armazém"    },
-             { prefix: "Controle total",  prefix2: "do seu",  word: "estoque"    },
-             { prefix: "Organize de vez",  prefix2: "o seu",  word: "inventário" },
-             { prefix: "Visibilidade total",  prefix2: "do",  word: "negócio"    },
-             { prefix: "Gestão inteligente",  prefix2: "do",  word: "depósito"   },
-         ];
-
-         const prefixEl   = document.getElementById('hero-prefix');
-         const prefix2El  = document.getElementById('hero-prefix2');
-         const wrapperEl  = document.getElementById('text-cycle-wrapper');
-         const currentEl  = document.getElementById('text-cycle-current');
-         const measureEl  = document.getElementById('text-measure');
-
-         if (!prefixEl || !prefix2El || !wrapperEl || !currentEl || !measureEl) return;
-
-         let index   = 0;
-         let running = false;
-
-         // Clona o estilo do texto animado para medir largura com precisão
-         function measureWidth(text) {
-             measureEl.style.fontFamily  = getComputedStyle(currentEl).fontFamily;
-             measureEl.style.fontSize    = getComputedStyle(currentEl).fontSize;
-             measureEl.style.fontWeight  = getComputedStyle(currentEl).fontWeight;
-             measureEl.style.fontStyle   = getComputedStyle(currentEl).fontStyle;
-             measureEl.style.letterSpacing = getComputedStyle(currentEl).letterSpacing;
-             measureEl.textContent = text;
-             return measureEl.getBoundingClientRect().width + 2; // +2px buffer
-         }
-
-         function setPhrase(idx, animate) {
-             const { prefix, prefix2, word } = phrases[idx];
-
-             // Atualiza prefixos
-             prefixEl.textContent = prefix;
-             prefix2El.textContent = prefix2 ? prefix2 + " " : "";
-
-            if (!animate) {
-                // Primeira renderização: sem animação
-                currentEl.textContent = word;
-                currentEl.className = 'text-cycle-item';
-                const w = measureWidth(word);
-                wrapperEl.style.width = w + 'px';
-                // Altura = fonte do elemento pai
-                wrapperEl.style.height = getComputedStyle(wrapperEl.parentElement).lineHeight;
-                return;
-            }
-
-            if (running) return;
-            running = true;
-
-            // 1. Anima saída do item atual
-            currentEl.classList.remove('text-cycle-entering');
-            currentEl.classList.add('text-cycle-exiting');
-
-            setTimeout(function () {
-                // 2. Troca o texto
-                currentEl.textContent = word;
-                const newWidth = measureWidth(word);
-
-                // 3. Anima largura do wrapper (spring via CSS transition)
-                wrapperEl.style.width = newWidth + 'px';
-
-                // 4. Anima entrada do novo texto
-                currentEl.classList.remove('text-cycle-exiting');
-                currentEl.classList.add('text-cycle-entering');
-
-                // Aguarda animação de entrada terminar
-                setTimeout(function () {
-                    currentEl.classList.remove('text-cycle-entering');
-                    running = false;
-                }, 420); // duração de textCycleIn
-
-            }, 320); // duração de textCycleOut
-        }
-
-        // Inicializa sem animação
-        setPhrase(0, false);
-
-        // Cicla a cada 3 segundos (igual ao interval={3000} do componente original)
-        setInterval(function () {
-            index = (index + 1) % phrases.length;
-            setPhrase(index, true);
-        }, 3000);
-    })();
-    </script>
-}
-else
-{
+         </div>
+     </section>
+ }
+ else
+ {
     <!-- ══════════════════════════════════════════════════════
          DASHBOARD - visível apenas para usuários autenticados
     ═══════════════════════════════════════════════════════════ -->
@@ -290,7 +198,100 @@ else
                         <span class="text-gray-400 dark:text-gray-600 text-xs">Estoque adequado</span>
                     }
                 </div>
-            </div>
-        </div>
-    </div>
-}
+             </div>
+         </div>
+     </div>
+ }
+
+@section Scripts {
+     <script>
+     (function () {
+         // ── Frases que cicam no lugar de "armazém" ──────────────────
+         // Estrutura: { prefix: "Linha 1", prefix2: "Linha 2 antes da palavra", word: "palavra animada" }
+         const phrases = [
+             { prefix: "O aplicativo parceiro",  prefix2: "do seu",  word: "armazém"    },
+             { prefix: "Controle total",  prefix2: "do seu",  word: "estoque"    },
+             { prefix: "Organize de vez",  prefix2: "o seu",  word: "inventário" },
+             { prefix: "Visibilidade total",  prefix2: "do",  word: "negócio"    },
+             { prefix: "Gestão inteligente",  prefix2: "do",  word: "depósito"   },
+         ];
+
+         const prefixEl   = document.getElementById('hero-prefix');
+         const prefix2El  = document.getElementById('hero-prefix2');
+         const wrapperEl  = document.getElementById('text-cycle-wrapper');
+         const currentEl  = document.getElementById('text-cycle-current');
+         const measureEl  = document.getElementById('text-measure');
+
+         if (!prefixEl || !prefix2El || !wrapperEl || !currentEl || !measureEl) return;
+
+         let index   = 0;
+         let running = false;
+
+         // Clona o estilo do texto animado para medir largura com precisão
+         function measureWidth(text) {
+             measureEl.style.fontFamily  = getComputedStyle(currentEl).fontFamily;
+             measureEl.style.fontSize    = getComputedStyle(currentEl).fontSize;
+             measureEl.style.fontWeight  = getComputedStyle(currentEl).fontWeight;
+             measureEl.style.fontStyle   = getComputedStyle(currentEl).fontStyle;
+             measureEl.style.letterSpacing = getComputedStyle(currentEl).letterSpacing;
+             measureEl.textContent = text;
+             return measureEl.getBoundingClientRect().width + 2; // +2px buffer
+         }
+
+         function setPhrase(idx, animate) {
+             const { prefix, prefix2, word } = phrases[idx];
+
+             // Atualiza prefixos
+             prefixEl.textContent = prefix;
+             prefix2El.textContent = prefix2 ? prefix2 + " " : "";
+
+             if (!animate) {
+                 // Primeira renderização: sem animação
+                 currentEl.textContent = word;
+                 currentEl.className = 'text-cycle-item';
+                 const w = measureWidth(word);
+                 wrapperEl.style.width = w + 'px';
+                 // Altura = fonte do elemento pai
+                 wrapperEl.style.height = getComputedStyle(wrapperEl.parentElement).lineHeight;
+                 return;
+             }
+
+             if (running) return;
+             running = true;
+
+             // 1. Anima saída do item atual
+             currentEl.classList.remove('text-cycle-entering');
+             currentEl.classList.add('text-cycle-exiting');
+
+             setTimeout(function () {
+                 // 2. Troca o texto
+                 currentEl.textContent = word;
+                 const newWidth = measureWidth(word);
+
+                 // 3. Anima largura do wrapper (spring via CSS transition)
+                 wrapperEl.style.width = newWidth + 'px';
+
+                 // 4. Anima entrada do novo texto
+                 currentEl.classList.remove('text-cycle-exiting');
+                 currentEl.classList.add('text-cycle-entering');
+
+                 // Aguarda animação de entrada terminar
+                 setTimeout(function () {
+                     currentEl.classList.remove('text-cycle-entering');
+                     running = false;
+                 }, 420); // duração de textCycleIn
+
+             }, 320); // duração de textCycleOut
+         }
+
+         // Inicializa sem animação
+         setPhrase(0, false);
+
+         // Cicla a cada 3 segundos (igual ao interval={3000} do componente original)
+         setInterval(function () {
+             index = (index + 1) % phrases.length;
+             setPhrase(index, true);
+         }, 3000);
+     })();
+     </script>
+ }
