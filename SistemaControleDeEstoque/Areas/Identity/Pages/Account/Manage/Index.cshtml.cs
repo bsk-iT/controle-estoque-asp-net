@@ -68,7 +68,7 @@ namespace SistemaControleDeEstoque.Areas.Identity.Pages.Account.Manage
 
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
-            // Remove a máscara antes de comparar e salvar — armazena só dígitos (padrão do projeto)
+            // Remove a máscara antes de comparar e salvar - armazena só dígitos (padrão do projeto)
             var telefoneLimpo = Regex.Replace(Input.NumTelefone ?? string.Empty, @"\D", "");
 
             if (telefoneLimpo != phoneNumber)

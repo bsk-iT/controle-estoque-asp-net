@@ -21,7 +21,7 @@
 @if (!SignInManager.IsSignedIn(User))
 {
     <!-- ══════════════════════════════════════════════════════
-         HERO — visível apenas para visitantes não autenticados
+         HERO - visível apenas para visitantes não autenticados
          Layout 50/50: texto esquerda | ilustração direita
     ═══════════════════════════════════════════════════════════ -->
     <section class="flex-grow w-full flex items-start overflow-hidden px-6 lg:px-12 pt-12">
@@ -185,7 +185,7 @@
 else
 {
     <!-- ══════════════════════════════════════════════════════
-         DASHBOARD — visível apenas para usuários autenticados
+         DASHBOARD - visível apenas para usuários autenticados
     ═══════════════════════════════════════════════════════════ -->
 
     <!-- Cabeçalho do dashboard -->
@@ -243,7 +243,7 @@ else
                 </svg>
             </div>
             <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Notificações de estoque baixo</p>
-            <a href="#"
+            <a asp-controller="Alertas" asp-action="Index"
                class="inline-flex items-center text-sm font-medium text-black dark:text-white border-b border-black dark:border-white hover:opacity-60 transition-opacity">
                 Ver alertas →
             </a>
@@ -283,7 +283,7 @@ else
                 <div class="mt-1">
                     @if (ViewBag.ProdutosEstoqueBaixo > 0)
                     {
-                        <span class="text-red-500 text-xs font-semibold">Atenção — precisam de reposição</span>
+                        <span class="text-red-500 text-xs font-semibold">Atenção: precisam de reposição</span>
                     }
                     else
                     {

@@ -1,3 +1,5 @@
+@model SistemaControleDeEstoque.Models.ViewModels.AdminDashboardViewModel
+
 @{
     ViewData["Title"] = "Administração";
 }
@@ -57,7 +59,7 @@
                     </svg>
                     <div>
                         <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total de Usuários</p>
-                        <p class="text-2xl font-semibold text-black dark:text-white">@ViewBag.TotalUsuarios</p>
+                        <p class="text-2xl font-semibold text-black dark:text-white">@Model.TotalUsuarios</p>
                     </div>
                 </div>
             </div>
@@ -69,7 +71,7 @@
                     </svg>
                     <div>
                         <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Produtos Cadastrados</p>
-                        <p class="text-2xl font-semibold text-black dark:text-white">@ViewBag.TotalProdutos</p>
+                        <p class="text-2xl font-semibold text-black dark:text-white">@Model.TotalProdutos</p>
                     </div>
                 </div>
             </div>
@@ -81,7 +83,7 @@
                     </svg>
                     <div>
                         <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Operações Hoje</p>
-                        <p class="text-2xl font-semibold text-black dark:text-white">@ViewBag.OperacoesHoje</p>
+                        <p class="text-2xl font-semibold text-black dark:text-white">@Model.OperacoesHoje</p>
                     </div>
                 </div>
             </div>

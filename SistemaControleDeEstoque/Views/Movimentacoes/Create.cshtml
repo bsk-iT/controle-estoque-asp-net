@@ -1,9 +1,9 @@
-@model SistemaControleDeEstoque.Models.Movimentacao
+@model SistemaControleDeEstoque.Models.ViewModels.MovimentacaoCreateViewModel
 
 @{
     ViewData["Title"] = "Nova Movimentação";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var estoqueProdutos = ViewData["EstoqueProdutos"] as Dictionary<int, int>;
+    var estoqueProdutos = Model.EstoqueProdutos;
 }
 
 <div class="flex justify-center pt-3">
@@ -82,8 +82,6 @@
                 </svg>
                 <span class="text-sm text-gray-700 dark:text-gray-300">@Model.UsuarioNome</span>
             </div>
-            <input asp-for="UsuarioId" type="hidden" />
-            <input asp-for="UsuarioNome" type="hidden" />
         </div>
 
             </div>

@@ -1,28 +1,23 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaControleDeEstoque.Data;
 using SistemaControleDeEstoque.Models;
+using SistemaControleDeEstoque.Models.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SistemaControleDeEstoque.Controllers
 {
     [Authorize]
-    public class RelatoriosController : Controller
+    public class RelatoriosController(
+        ApplicationDbContext context,
+        UserManager<IdentityUser> userManager) : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
-
-        public RelatoriosController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
-        {
-            _context = context;
-            _userManager = userManager;
-        }
+        private readonly ApplicationDbContext _context = context;
+        private readonly UserManager<IdentityUser> _userManager = userManager;
 
         // GET: Relatorios
         public async Task<IActionResult> Index()
@@ -61,7 +56,7 @@ namespace SistemaControleDeEstoque.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 if (relatorio.UsuarioGerador != user?.UserName)
                 {
-                    return NotFound(); // Retorna 404 em vez de 403 para não revelar que o registro existe
+                    return NotFound(); // 404 em vez de 403 para não revelar que o registro existe
                 }
             }
 
@@ -84,30 +79,24 @@ namespace SistemaControleDeEstoque.Controllers
                 return NotFound();
             }
 
-            // Dependendo do tipo de relatório, vamos buscar dados diferentes
             switch (relatorio.Tipo)
             {
                 case TipoRelatorio.Estoque:
-                    // Buscar produtos no estoque
                     var produtos = await _context.Produto
                         .Include(p => p.Fornecedor)
                         .ToListAsync();
-
                     ViewBag.Produtos = produtos;
                     ViewBag.DataInicio = relatorio.DataInicio ?? DateTime.MinValue;
                     ViewBag.DataFim = relatorio.DataFim ?? DateTime.Now;
                     break;
 
                 case TipoRelatorio.Movimentacoes:
-                    // Buscar movimentações
                     var movimentacoes = await _context.Movimentacao
                         .Include(m => m.Produto)
                         .Where(m =>
                             (!relatorio.DataInicio.HasValue || m.DataMovimentacao >= relatorio.DataInicio) &&
-                            (!relatorio.DataFim.HasValue || m.DataMovimentacao <= relatorio.DataFim)
-                        )
+                            (!relatorio.DataFim.HasValue || m.DataMovimentacao <= relatorio.DataFim))
                         .ToListAsync();
-
                     ViewBag.Movimentacoes = movimentacoes;
                     ViewBag.DataInicio = relatorio.DataInicio ?? DateTime.MinValue;
                     ViewBag.DataFim = relatorio.DataFim ?? DateTime.Now;
@@ -121,54 +110,59 @@ namespace SistemaControleDeEstoque.Controllers
         [Authorize(Policy = "RequireUserAdminGerenteRole")]
         public async Task<IActionResult> Create()
         {
-            // Obter usuário atual
             var user = await _userManager.GetUserAsync(User);
 
-            var relatorio = new Relatorio
+            var vm = new RelatorioCreateViewModel
             {
                 DataGeracao = DateTime.Now,
                 UsuarioGerador = user?.UserName ?? "Usuário não identificado"
             };
 
-            return View(relatorio);
+            return View(vm);
         }
 
         // POST: Relatorios/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "RequireUserAdminGerenteRole")]
-        public async Task<IActionResult> Create([Bind("Id,Tipo,DataGeracao,UsuarioGerador,DataInicio,DataFim,FornecedorId,ProdutoId,IncluirProdutosZerados,Ordenacao,ApenasAbaixoDoMinimo,TipoMovimentacao,Resumido")] Relatorio relatorio)
+        public async Task<IActionResult> Create(RelatorioCreateViewModel vm)
         {
-            // Garantir que o usuário gerador seja o usuário logado
+            // Garantir que o usuário gerador seja o usuário logado (previne overposting)
             var user = await _userManager.GetUserAsync(User);
-            relatorio.UsuarioGerador = user?.UserName ?? "Usuário não identificado";
+            vm.UsuarioGerador = user?.UserName ?? "Usuário não identificado";
+            vm.DataGeracao = DateTime.Now;
 
-            // Implementar regras de datas conforme solicitado
             // Se data final não foi informada, usar data atual
-            if (!relatorio.DataFim.HasValue)
+            if (!vm.DataFim.HasValue)
             {
-                relatorio.DataFim = DateTime.Now;
-            }
-
-            // Validação adicional para data início maior que data fim
-            if (relatorio.DataInicio.HasValue && relatorio.DataFim.HasValue && relatorio.DataInicio > relatorio.DataFim)
-            {
-                ModelState.AddModelError("DataInicio", "A data inicial não pode ser maior que a data final");
+                vm.DataFim = DateTime.Now;
             }
 
             if (ModelState.IsValid)
             {
-                // Ação específica dependendo do tipo de relatório
+                var relatorio = new Relatorio
+                {
+                    Tipo = vm.Tipo,
+                    DataGeracao = vm.DataGeracao,
+                    UsuarioGerador = vm.UsuarioGerador,
+                    DataInicio = vm.DataInicio,
+                    DataFim = vm.DataFim,
+                    FornecedorId = vm.FornecedorId,
+                    ProdutoId = vm.ProdutoId,
+                    IncluirProdutosZerados = vm.IncluirProdutosZerados,
+                    Ordenacao = vm.Ordenacao,
+                    ApenasAbaixoDoMinimo = vm.ApenasAbaixoDoMinimo,
+                    TipoMovimentacao = vm.TipoMovimentacao,
+                    Resumido = vm.Resumido
+                };
+
                 switch (relatorio.Tipo)
                 {
                     case TipoRelatorio.Estoque:
-                        // Aqui você implementaria a lógica para gerar o relatório de inventário
-                        TempData["MensagemSucesso"] = $"Relatório de Inventário de Estoque gerado com sucesso!";
+                        TempData["MensagemSucesso"] = "Relatório de Inventário de Estoque gerado com sucesso!";
                         break;
-
                     case TipoRelatorio.Movimentacoes:
-                        // Aqui você implementaria a lógica para gerar o relatório de movimentações
-                        TempData["MensagemSucesso"] = $"Relatório de Movimentações gerado com sucesso!";
+                        TempData["MensagemSucesso"] = "Relatório de Movimentações gerado com sucesso!";
                         break;
                 }
 
@@ -177,14 +171,13 @@ namespace SistemaControleDeEstoque.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(relatorio);
+            return View(vm);
         }
 
         // GET: Relatorios/Edit/5
         [Authorize(Roles = "Admin,Gerente")]
         public IActionResult Edit(int? id)
         {
-            // Redirecionar para detalhes ou index com mensagem informativa
             TempData["Mensagem"] = "A edição de relatórios não é permitida. Relatórios são registros históricos imutáveis.";
             return RedirectToAction(nameof(Index));
         }
@@ -193,9 +186,8 @@ namespace SistemaControleDeEstoque.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Gerente")]
-        public IActionResult Edit(int id, [Bind("Id,Tipo,DataGeracao,UsuarioGerador")] Relatorio relatorio)
+        public IActionResult Edit(int id, RelatorioCreateViewModel vm)
         {
-            // Redirecionar para detalhes ou index com mensagem informativa
             TempData["Mensagem"] = "A edição de relatórios não é permitida. Relatórios são registros históricos imutáveis.";
             return RedirectToAction(nameof(Index));
         }

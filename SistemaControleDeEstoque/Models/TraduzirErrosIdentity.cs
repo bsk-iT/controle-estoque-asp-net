@@ -49,7 +49,7 @@ public class TraduzirErrosIdentity : IdentityErrorDescriber
         };
     }
 
-    public override IdentityError InvalidUserName(string userName)
+    public override IdentityError InvalidUserName(string? userName)
     {
         return new IdentityError
         {
@@ -58,7 +58,7 @@ public class TraduzirErrosIdentity : IdentityErrorDescriber
         };
     }
 
-    public override IdentityError DuplicateUserName(string userName)
+    public override IdentityError DuplicateUserName(string? userName)
     {
         return new IdentityError
         {
@@ -67,7 +67,7 @@ public class TraduzirErrosIdentity : IdentityErrorDescriber
         };
     }
 
-    public override IdentityError DuplicateEmail(string email)
+    public override IdentityError DuplicateEmail(string? email)
     {
         return new IdentityError
         {

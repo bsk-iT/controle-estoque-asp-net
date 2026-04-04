@@ -21,7 +21,7 @@ namespace SistemaControleDeEstoque.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Obter dados para a vis�o geral do estoque
+            // Obter dados para a visão geral do estoque
 
             // 1. Total de produtos cadastrados
             var totalProdutos = await _context.Produto.CountAsync();
@@ -29,20 +29,29 @@ namespace SistemaControleDeEstoque.Controllers
             // 2. Valor total do estoque (quantidade * valor de cada produto)
             var valorTotalEstoque = await _context.Produto.SumAsync(p => p.Quantidade * p.Valor);
 
-            // 3. Produtos com estoque abaixo do estoque de seguran�a
+            // 3. Produtos com estoque abaixo do estoque de segurança
             var produtosEstoqueBaixo = await _context.Produto
                 .Where(p => p.Quantidade < p.EstoqueSeguranca)
                 .CountAsync();
+
+            // 4. Top 3 produtos com alertas (mais críticos = menor quantidade)
+            var topAlertasProdutos = await _context.Produto
+                .Where(p => p.Quantidade < p.EstoqueSeguranca)
+                .OrderBy(p => p.Quantidade)
+                .Take(3)
+                .Select(p => new { p.Id, p.Nome, p.Quantidade, p.EstoqueSeguranca })
+                .ToListAsync();
 
             // Passar os dados para a view usando ViewBag
             ViewBag.TotalProdutos = totalProdutos;
             ViewBag.ValorTotalEstoque = valorTotalEstoque;
             ViewBag.ProdutosEstoqueBaixo = produtosEstoqueBaixo;
+            ViewBag.TopAlertasProdutos = topAlertasProdutos;
 
-            // Varia��o mensal - exemplo est�tico, mas poderia ser calculado dinamicamente
-            // comparando com dados do m�s anterior armazenados no banco de dados
-            ViewBag.VariacaoTotalProdutos = 0; // 0% de varia��o (sem altera��o)
-            ViewBag.VariacaoValorEstoque = 0;  // 0% de varia��o (sem altera��o)
+            // Variação mensal - exemplo estático, mas poderia ser calculado dinamicamente
+            // comparando com dados do mês anterior armazenados no banco de dados
+            ViewBag.VariacaoTotalProdutos = 0; // 0% de variação (sem alteração)
+            ViewBag.VariacaoValorEstoque = 0;  // 0% de variação (sem alteração)
 
             return View();
         }

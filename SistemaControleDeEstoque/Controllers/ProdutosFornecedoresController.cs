@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaControleDeEstoque.Data;
 using SistemaControleDeEstoque.Models;
+using SistemaControleDeEstoque.Models.ViewModels;
+using System.Threading.Tasks;
 
 namespace SistemaControleDeEstoque.Controllers
 {
     [Authorize]
-    public class ProdutosFornecedoresController : Controller
+    public class ProdutosFornecedoresController(ApplicationDbContext context) : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public ProdutosFornecedoresController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
 
         // GET: ProdutosFornecedores
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.ProdutoFornecedor.Include(p => p.Fornecedor).Include(p => p.Produto);
-            return View(await applicationDbContext.ToListAsync());
+            var lista = await _context.ProdutoFornecedor
+                .Include(p => p.Fornecedor)
+                .Include(p => p.Produto)
+                .ToListAsync();
+            return View(lista);
         }
 
         // GET: ProdutosFornecedores/Details/5
@@ -55,26 +51,31 @@ namespace SistemaControleDeEstoque.Controllers
         {
             ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "CNPJ");
             ViewData["ProdutoId"] = new SelectList(_context.Produto, "Id", "Nome");
-            return View();
+            return View(new ProdutoFornecedorViewModel());
         }
 
         // POST: ProdutosFornecedores/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Gerente")]
-        public async Task<IActionResult> Create([Bind("Id,ProdutoId,FornecedorId")] ProdutoFornecedor produtoFornecedor)
+        public async Task<IActionResult> Create(ProdutoFornecedorViewModel vm)
         {
             if (ModelState.IsValid)
             {
+                var produtoFornecedor = new ProdutoFornecedor
+                {
+                    ProdutoId = vm.ProdutoId,
+                    FornecedorId = vm.FornecedorId,
+                    Produto = null!,
+                    Fornecedor = null!
+                };
                 _context.Add(produtoFornecedor);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "CNPJ", produtoFornecedor.FornecedorId);
-            ViewData["ProdutoId"] = new SelectList(_context.Produto, "Id", "Nome", produtoFornecedor.ProdutoId);
-            return View(produtoFornecedor);
+            ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "CNPJ", vm.FornecedorId);
+            ViewData["ProdutoId"] = new SelectList(_context.Produto, "Id", "Nome", vm.ProdutoId);
+            return View(vm);
         }
 
         // GET: ProdutosFornecedores/Edit/5
@@ -91,26 +92,40 @@ namespace SistemaControleDeEstoque.Controllers
             {
                 return NotFound();
             }
-            ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "CNPJ", produtoFornecedor.FornecedorId);
-            ViewData["ProdutoId"] = new SelectList(_context.Produto, "Id", "Nome", produtoFornecedor.ProdutoId);
-            return View(produtoFornecedor);
+
+            var vm = new ProdutoFornecedorViewModel
+            {
+                Id = produtoFornecedor.Id,
+                ProdutoId = produtoFornecedor.ProdutoId,
+                FornecedorId = produtoFornecedor.FornecedorId
+            };
+            ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "CNPJ", vm.FornecedorId);
+            ViewData["ProdutoId"] = new SelectList(_context.Produto, "Id", "Nome", vm.ProdutoId);
+            return View(vm);
         }
 
         // POST: ProdutosFornecedores/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Gerente")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProdutoId,FornecedorId")] ProdutoFornecedor produtoFornecedor)
+        public async Task<IActionResult> Edit(int id, ProdutoFornecedorViewModel vm)
         {
-            if (id != produtoFornecedor.Id)
+            if (id != vm.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                var produtoFornecedor = new ProdutoFornecedor
+                {
+                    Id = vm.Id,
+                    ProdutoId = vm.ProdutoId,
+                    FornecedorId = vm.FornecedorId,
+                    Produto = null!,
+                    Fornecedor = null!
+                };
+
                 try
                 {
                     _context.Update(produtoFornecedor);
@@ -118,7 +133,7 @@ namespace SistemaControleDeEstoque.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await ProdutoFornecedorExistsAsync(produtoFornecedor.Id))
+                    if (!await ProdutoFornecedorExistsAsync(vm.Id))
                     {
                         return NotFound();
                     }
@@ -129,9 +144,9 @@ namespace SistemaControleDeEstoque.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "CNPJ", produtoFornecedor.FornecedorId);
-            ViewData["ProdutoId"] = new SelectList(_context.Produto, "Id", "Nome", produtoFornecedor.ProdutoId);
-            return View(produtoFornecedor);
+            ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "CNPJ", vm.FornecedorId);
+            ViewData["ProdutoId"] = new SelectList(_context.Produto, "Id", "Nome", vm.ProdutoId);
+            return View(vm);
         }
 
         // GET: ProdutosFornecedores/Delete/5

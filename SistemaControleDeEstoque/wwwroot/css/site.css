@@ -223,3 +223,23 @@ td.dataTables_empty {
 .dark .dt-paging .dt-paging-button.disabled:hover {
     color: #4b5563 !important; /* gray-600 */
 }
+
+/* ════════════════════════════════════════════════════════════════
+   ANIMAÇÃO SLIDE DOWN
+   Animação para avisos/alertas que aparecem na página.
+   ════════════════════════════════════════════════════════════════ */
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slide-down {
+    animation: slideDown 0.3s ease-out;
+}

@@ -12,18 +12,18 @@ namespace SistemaControleDeEstoque.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminRolesController : Controller
     {
-        private RoleManager<IdentityRole> roleManager;
-        private UserManager<IdentityUser> userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
         public AdminRolesController(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
         {
-            this.roleManager = roleManager;
-            this.userManager = userManager;
+            _roleManager = roleManager;
+            _userManager = userManager;
         }
 
-    public ViewResult Index() => View(roleManager.Roles);
+        public ViewResult Index() => View(_roleManager.Roles);
 
-    public IActionResult Create() => View();
+        public IActionResult Create() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -31,7 +31,7 @@ namespace SistemaControleDeEstoque.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                IdentityResult result = await roleManager.CreateAsync(new IdentityRole(name));
+                IdentityResult result = await _roleManager.CreateAsync(new IdentityRole(name));
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index");
@@ -46,7 +46,7 @@ namespace SistemaControleDeEstoque.Areas.Admin.Controllers
 
         public async Task<IActionResult> Update(string id)
         {
-            IdentityRole? role = await roleManager.FindByIdAsync(id);
+            IdentityRole? role = await _roleManager.FindByIdAsync(id);
             if (role == null)
                 return NotFound();
 
@@ -55,11 +55,11 @@ namespace SistemaControleDeEstoque.Areas.Admin.Controllers
 
             // Materializa todos os usuários em memória antes do loop para evitar
             // "There is already an open DataReader" ao chamar IsInRoleAsync dentro do foreach.
-            var allUsers = await userManager.Users.ToListAsync();
+            var allUsers = await _userManager.Users.ToListAsync();
 
             foreach (IdentityUser user in allUsers)
             {
-                var list = await userManager.IsInRoleAsync(user, role.Name!) ? members : nonMembers;
+                var list = await _userManager.IsInRoleAsync(user, role.Name!) ? members : nonMembers;
                 list.Add(user);
             }
 
@@ -81,10 +81,10 @@ namespace SistemaControleDeEstoque.Areas.Admin.Controllers
             {
                 foreach (string userId in model.AddIds ?? new string[] { })
                 {
-                    IdentityUser user = await userManager.FindByIdAsync(userId);
+                    IdentityUser? user = await _userManager.FindByIdAsync(userId);
                     if (user != null)
                     {
-                        result = await userManager.AddToRoleAsync(user, model.RoleName);
+                        result = await _userManager.AddToRoleAsync(user, model.RoleName!);
                         if (!result.Succeeded)
                         {
                             Errors(result);
@@ -93,10 +93,10 @@ namespace SistemaControleDeEstoque.Areas.Admin.Controllers
                 }
                 foreach (string userId in model.DeleteIds ?? new string[] { })
                 {
-                    IdentityUser user = await userManager.FindByIdAsync(userId);
+                    IdentityUser? user = await _userManager.FindByIdAsync(userId);
                     if (user != null)
                     {
-                        result = await userManager.RemoveFromRoleAsync(user, model.RoleName);
+                        result = await _userManager.RemoveFromRoleAsync(user, model.RoleName!);
                         if (!result.Succeeded)
                         {
                             Errors(result);
@@ -104,15 +104,16 @@ namespace SistemaControleDeEstoque.Areas.Admin.Controllers
                     }
                 }
             }
-        if (ModelState.IsValid)
-            return RedirectToAction("Index");
 
-        return await Update(model.RoleId ?? string.Empty);
+            if (ModelState.IsValid)
+                return RedirectToAction("Index");
+
+            return await Update(model.RoleId ?? string.Empty);
         }
 
         public async Task<IActionResult> Delete(string id)
         {
-            IdentityRole? role = await roleManager.FindByIdAsync(id);
+            IdentityRole? role = await _roleManager.FindByIdAsync(id);
 
             if (role == null)
             {
@@ -126,11 +127,11 @@ namespace SistemaControleDeEstoque.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var role = await roleManager.FindByIdAsync(id);
+            var role = await _roleManager.FindByIdAsync(id);
 
             if (role != null)
             {
-                IdentityResult result = await roleManager.DeleteAsync(role);
+                IdentityResult result = await _roleManager.DeleteAsync(role);
 
                 if (result.Succeeded)
                 {
@@ -139,13 +140,13 @@ namespace SistemaControleDeEstoque.Areas.Admin.Controllers
                 else
                 {
                     Errors(result);
-                }               
+                }
             }
             else
             {
                 ModelState.AddModelError("", "Role não encontrada.");
             }
-            return View("Index", roleManager.Roles);
+            return View("Index", _roleManager.Roles);
         }
 
         private void Errors(IdentityResult result)

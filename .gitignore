@@ -378,7 +378,8 @@ FodyWeavers.xsd
 /SEED_README.md
 /IMPLEMENTACAO_SEED.md
 /GUIA_RAPIDO_SEED.md
-/Revisão Completa do Código — Sistema de Controle de Estoque.md
+/Revisão Completa do Código*.md
+/Revision Completa do Código*.md
 
 # Arquivos de configuração de publicação/deploy (gerados pelo Visual Studio/ambiente local)
 SistemaControleDeEstoque/Properties/PublishProfiles/

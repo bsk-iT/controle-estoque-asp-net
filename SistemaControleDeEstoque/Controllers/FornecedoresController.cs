@@ -1,25 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaControleDeEstoque.Data;
 using SistemaControleDeEstoque.Models;
+using SistemaControleDeEstoque.Models.ViewModels;
+using System.Threading.Tasks;
 
 namespace SistemaControleDeEstoque.Controllers
 {
     [Authorize]
-    public class FornecedoresController : Controller
+    public class FornecedoresController(ApplicationDbContext context) : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public FornecedoresController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
 
         // GET: Fornecedores
         public async Task<IActionResult> Index()
@@ -50,22 +42,35 @@ namespace SistemaControleDeEstoque.Controllers
         [Authorize(Roles = "Admin,Gerente")]
         public IActionResult Create()
         {
-            return View();
+            return View(new FornecedorViewModel
+            {
+                Nome = string.Empty,
+                CNPJ = string.Empty,
+                Email = string.Empty,
+                Telefone = string.Empty
+            });
         }
 
         // POST: Fornecedores/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Gerente")]
-        public async Task<IActionResult> Create([Bind("Id,Nome,CNPJ,Email,Telefone")] Fornecedor fornecedor)
+        public async Task<IActionResult> Create(FornecedorViewModel vm)
         {
             if (ModelState.IsValid)
             {
+                var fornecedor = new Fornecedor
+                {
+                    Nome = vm.Nome,
+                    CNPJ = vm.CNPJ,
+                    Email = vm.Email,
+                    Telefone = vm.Telefone
+                };
                 _context.Add(fornecedor);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(fornecedor);
+            return View(vm);
         }
 
         // GET: Fornecedores/Edit/5
@@ -82,22 +87,40 @@ namespace SistemaControleDeEstoque.Controllers
             {
                 return NotFound();
             }
-            return View(fornecedor);
+
+            var vm = new FornecedorViewModel
+            {
+                Id = fornecedor.Id,
+                Nome = fornecedor.Nome,
+                CNPJ = fornecedor.CNPJ,
+                Email = fornecedor.Email,
+                Telefone = fornecedor.Telefone
+            };
+            return View(vm);
         }
 
         // POST: Fornecedores/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Gerente")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,CNPJ,Email,Telefone")] Fornecedor fornecedor)
+        public async Task<IActionResult> Edit(int id, FornecedorViewModel vm)
         {
-            if (id != fornecedor.Id)
+            if (id != vm.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                var fornecedor = new Fornecedor
+                {
+                    Id = vm.Id,
+                    Nome = vm.Nome,
+                    CNPJ = vm.CNPJ,
+                    Email = vm.Email,
+                    Telefone = vm.Telefone
+                };
+
                 try
                 {
                     _context.Update(fornecedor);
@@ -105,7 +128,7 @@ namespace SistemaControleDeEstoque.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await FornecedorExistsAsync(fornecedor.Id))
+                    if (!await FornecedorExistsAsync(vm.Id))
                     {
                         return NotFound();
                     }
@@ -116,7 +139,7 @@ namespace SistemaControleDeEstoque.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(fornecedor);
+            return View(vm);
         }
 
         // GET: Fornecedores/Delete/5
@@ -145,12 +168,25 @@ namespace SistemaControleDeEstoque.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var fornecedor = await _context.Fornecedor.FindAsync(id);
-            if (fornecedor != null)
+            if (fornecedor == null)
             {
-                _context.Fornecedor.Remove(fornecedor);
+                return NotFound();
             }
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Fornecedor.Remove(fornecedor);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await FornecedorExistsAsync(id))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                throw;
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

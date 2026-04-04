@@ -1,10 +1,8 @@
-@model SistemaControleDeEstoque.Models.Produto
+@model SistemaControleDeEstoque.Models.ViewModels.ProdutoEditViewModel
 
 @{
     ViewData["Title"] = "Editar Produto";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var fornecedoresDisponiveis = ViewBag.FornecedoresDisponiveis as List<SistemaControleDeEstoque.Models.Fornecedor>;
-    var produtoFornecedores = ViewBag.ProdutoFornecedores as List<SistemaControleDeEstoque.Models.ProdutoFornecedor>;
 }
 
 <div class="flex justify-center pt-3">
@@ -22,63 +20,63 @@
             <div asp-validation-summary="ModelOnly"
                  class="text-sm text-red-600 dark:text-red-400 p-3 border border-red-200 dark:border-red-800 rounded-md"
                  role="alert"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Produto.Id" />
 
             <!-- Grid de campos (coluna única) -->
             <div class="grid grid-cols-1 gap-5">
 
                 <!-- Nome -->
                 <div>
-                    <label asp-for="Nome"
+                    <label asp-for="Produto.Nome"
                            class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"></label>
-                    <input asp-for="Nome"
+                    <input asp-for="Produto.Nome"
                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-colors duration-150" />
-                    <span asp-validation-for="Nome" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
+                    <span asp-validation-for="Produto.Nome" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
                 </div>
 
                 <!-- Tipo -->
                 <div>
-                    <label asp-for="Tipo"
+                    <label asp-for="Produto.Tipo"
                            class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"></label>
-                    <input asp-for="Tipo"
+                    <input asp-for="Produto.Tipo"
                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-colors duration-150" />
-                    <span asp-validation-for="Tipo" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
+                    <span asp-validation-for="Produto.Tipo" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
                 </div>
 
                 <!-- Quantidade -->
                 <div>
-                    <label asp-for="Quantidade"
+                    <label asp-for="Produto.Quantidade"
                            class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"></label>
-                    <input asp-for="Quantidade"
+                    <input asp-for="Produto.Quantidade"
                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-colors duration-150" />
-                    <span asp-validation-for="Quantidade" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
+                    <span asp-validation-for="Produto.Quantidade" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
                 </div>
 
                 <!-- Valor -->
                 <div>
-                    <label asp-for="Valor"
+                    <label asp-for="Produto.Valor"
                            class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"></label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="text-gray-400 dark:text-gray-500 text-sm">R$</span>
                         </div>
-                        <input asp-for="Valor"
+                        <input asp-for="Produto.Valor"
                                class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-colors duration-150" />
                     </div>
-                    <span asp-validation-for="Valor" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
+                    <span asp-validation-for="Produto.Valor" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
                 </div>
 
                 <!-- Fornecedor Principal -->
                 <div>
-                    <label asp-for="FornecedorId"
+                    <label asp-for="Produto.FornecedorId"
                            class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
                         Fornecedor Principal
                     </label>
-                    <select asp-for="FornecedorId" asp-items="ViewBag.FornecedorId"
+                    <select asp-for="Produto.FornecedorId" asp-items="Model.FornecedoresSelectList"
                             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-colors duration-150">
                         <option value="">— Selecione um fornecedor principal —</option>
                     </select>
-                    <span asp-validation-for="FornecedorId" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
+                    <span asp-validation-for="Produto.FornecedorId" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
                 </div>
 
             </div>
@@ -91,10 +89,10 @@
                 <div class="border border-gray-200 dark:border-gray-800 rounded-lg p-4 space-y-3">
                     <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Associados a este produto</p>
 
-                    @if (produtoFornecedores != null && produtoFornecedores.Any())
+                    @if (Model.ProdutoFornecedores != null && Model.ProdutoFornecedores.Any())
                     {
                         <div class="space-y-2">
-                            @foreach (var pf in produtoFornecedores)
+                            @foreach (var pf in Model.ProdutoFornecedores)
                             {
                                 <div class="flex items-center justify-between px-3 py-2 border border-gray-100 dark:border-gray-800 rounded-md">
                                     <div>
@@ -126,9 +124,9 @@
                         <select id="novoFornecedor"
                                 class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-colors duration-150">
                             <option value="">— Selecione um fornecedor —</option>
-                            @if (fornecedoresDisponiveis != null)
+                            @if (Model.FornecedoresDisponiveis != null)
                             {
-                                @foreach (var fornecedor in fornecedoresDisponiveis)
+                                @foreach (var fornecedor in Model.FornecedoresDisponiveis)
                                 {
                                     <option value="@fornecedor.Id">@fornecedor.Nome</option>
                                 }
@@ -175,60 +173,7 @@
     <script>
         function adicionarFornecedor() {
             const fornecedorId = document.getElementById('novoFornecedor').value;
-            const produtoId = @Model.Id;
-
-            if (!fornecedorId) {
-                alert('Por favor, selecione um fornecedor para adicionar.');
-                return;
-            }
-
-            fetch(`/api/ProdutosFornecedores`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                },
-                body: JSON.stringify({
-                    produtoId: produtoId,
-                    fornecedorId: fornecedorId
-                })
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Erro ao adicionar fornecedor');
-                return response.json();
-            })
-            .then(() => window.location.reload())
-            .catch(error => {
-                console.error('Erro:', error);
-                alert('Ocorreu um erro ao adicionar o fornecedor. Tente novamente.');
-            });
-        }
-
-        function removeFornecedor(produtoFornecedorId) {
-            if (!confirm('Tem certeza que deseja remover este fornecedor?')) return;
-
-            fetch(`/api/ProdutosFornecedores/${produtoFornecedorId}`, {
-                method: 'DELETE',
-                headers: {
-                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                }
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Erro ao remover fornecedor');
-                window.location.reload();
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-                alert('Ocorreu um erro ao remover o fornecedor. Tente novamente.');
-            });
-        }
-    </script>
-}
-
-    <script>
-        function adicionarFornecedor() {
-            const fornecedorId = document.getElementById('novoFornecedor').value;
-            const produtoId = @Model.Id;
+            const produtoId = @Model.Produto.Id;
 
             if (!fornecedorId) {
                 alert('Por favor, selecione um fornecedor para adicionar.');

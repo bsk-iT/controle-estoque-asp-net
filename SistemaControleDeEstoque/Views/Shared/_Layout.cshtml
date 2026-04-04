@@ -1,5 +1,17 @@
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using SistemaControleDeEstoque.Data
 @inject SignInManager<IdentityUser> SignInManager
+@inject ApplicationDbContext Db
+
+@{
+    // Calculado uma vez aqui para evitar @{ } aninhado dentro de @if (erro de sintaxe Razor)
+    var alertCount = 0;
+    if (SignInManager.IsSignedIn(User) && (User.IsInRole("Gerente") || User.IsInRole("Admin")))
+    {
+        alertCount = await Db.Produto.CountAsync(p => p.Quantidade < p.EstoqueSeguranca);
+    }
+}
 
 <!DOCTYPE html>
 <html lang="pt-br" class="h-full">
@@ -87,6 +99,21 @@
                            class="text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150">
                             Relatórios
                         </a>
+                        
+                        <!-- Link para Alertas (apenas Gerente e Admin) -->
+                        @if (User.IsInRole("Gerente") || User.IsInRole("Admin"))
+                        {
+                            <a asp-area="" asp-controller="Alertas" asp-action="Index"
+                               class="relative text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white transition-colors duration-150 flex items-center gap-2">
+                                Alertas
+                                @if (alertCount > 0)
+                                {
+                                    <span class="inline-flex items-center justify-center h-5 w-5 rounded-full bg-red-500 text-white text-xs font-bold">
+                                        @alertCount
+                                    </span>
+                                }
+                            </a>
+                        }
                     }
                     <!-- Admin (apenas para role Admin) -->
                     <partial name="_LoginAdmin.cshtml" />
@@ -145,6 +172,21 @@
                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
                             Relatórios
                         </a>
+                        
+                        <!-- Link para Alertas (apenas Gerente e Admin) -->
+                        @if (User.IsInRole("Gerente") || User.IsInRole("Admin"))
+                        {
+                            <a asp-area="" asp-controller="Alertas" asp-action="Index"
+                               class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors flex items-center justify-between">
+                                <span>Alertas</span>
+                                @if (alertCount > 0)
+                                {
+                                    <span class="inline-flex items-center justify-center h-5 w-5 rounded-full bg-red-500 text-white text-xs font-bold">
+                                        @alertCount
+                                    </span>
+                                }
+                            </a>
+                        }
                     }
                     <partial name="_LoginAdminMobile" />
                     <!-- Auth mobile -->
@@ -163,6 +205,23 @@
             : "w-full max-w-screen-xl mx-auto px-6 lg:px-12 py-8 flex-grow";
     }
     <div class="@mainClass">
+        <!-- Aviso de Alerta (TempData) -->
+        @if (TempData["AlertaEstoque"] != null)
+        {
+            <div id="alerta-estoque" class="mb-6 p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg flex items-start gap-3 animate-slide-down">
+                <svg class="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                <div class="flex-grow">
+                    <p class="text-sm text-amber-800 dark:text-amber-200">@TempData["AlertaEstoque"]</p>
+                </div>
+                <button type="button" onclick="document.getElementById('alerta-estoque').remove()" class="text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 flex-shrink-0">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        }
         <main class="@(ViewData["FullHeight"] != null ? "flex-grow flex flex-col" : "")">@RenderBody()</main>
     </div>
 

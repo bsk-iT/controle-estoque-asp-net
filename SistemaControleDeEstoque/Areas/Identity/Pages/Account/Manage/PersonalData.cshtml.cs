@@ -27,7 +27,8 @@ namespace SistemaControleDeEstoque.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                _logger.LogWarning("PersonalData: usuário autenticado não encontrado no banco. UserId: {UserId}", _userManager.GetUserId(User));
+                return NotFound();
             }
 
             return Page();

@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SistemaControleDeEstoque.Data;
 using SistemaControleDeEstoque.Models;
-using System.Threading.Tasks;
 
 namespace SistemaControleDeEstoque.Controllers.Api
 {
-    /// <summary>DTO para associar Produto a Fornecedor (previne overposting de object graph)</summary>
+    /// <summary>DTO de entrada para associar Produto a Fornecedor (previne overposting de object graph).</summary>
     public record AssociarProdutoFornecedorDto(int ProdutoId, int FornecedorId);
+
+    /// <summary>DTO de saída para retornar dados da associação criada (sem navigation properties).</summary>
+    public record ProdutoFornecedorResponseDto(int Id, int ProdutoId, int FornecedorId);
 
     [Route("api/[controller]")]
     [ApiController]
@@ -25,7 +27,7 @@ namespace SistemaControleDeEstoque.Controllers.Api
         // POST: api/ProdutosFornecedores
         [HttpPost]
         [Authorize(Roles = "Admin,Gerente")]
-        public async Task<ActionResult<ProdutoFornecedor>> PostProdutoFornecedor([FromBody] AssociarProdutoFornecedorDto dto)
+        public async Task<ActionResult<ProdutoFornecedorResponseDto>> PostProdutoFornecedor([FromBody] AssociarProdutoFornecedorDto dto)
         {
             // Validar existência do Produto
             var produto = await _context.Produto.FindAsync(dto.ProdutoId);
@@ -52,19 +54,27 @@ namespace SistemaControleDeEstoque.Controllers.Api
                 return Conflict(new { message = "Esta associação já existe" });
             }
 
-            // Construir entidade sem aceitar object graph do cliente (previne overposting)
+            // Construir entidade sem navigation properties para evitar overposting.
+            // O EF Core rastreia a associação pelas FKs; null! suprime o aviso do compilador.
             var produtoFornecedor = new ProdutoFornecedor
             {
                 ProdutoId = dto.ProdutoId,
                 FornecedorId = dto.FornecedorId,
-                Produto = produto,
-                Fornecedor = fornecedor
+                Produto = null!,
+                Fornecedor = null!,
             };
 
             _context.ProdutoFornecedor.Add(produtoFornecedor);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProdutoFornecedor", new { id = produtoFornecedor.Id }, produtoFornecedor);
+            var response = new ProdutoFornecedorResponseDto(
+                produtoFornecedor.Id,
+                produtoFornecedor.ProdutoId,
+                produtoFornecedor.FornecedorId);
+
+            // Usa nameof(PostProdutoFornecedor) pois não há GET action neste controller.
+            // O Location header aponta para o próprio POST endpoint como referência do recurso criado.
+            return CreatedAtAction(nameof(PostProdutoFornecedor), new { id = produtoFornecedor.Id }, response);
         }
 
         // DELETE: api/ProdutosFornecedores/5

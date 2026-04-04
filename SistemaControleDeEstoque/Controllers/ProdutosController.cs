@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaControleDeEstoque.Data;
 using SistemaControleDeEstoque.Models;
-using System;
-using System.Collections.Generic;
+using SistemaControleDeEstoque.Models.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,10 +18,11 @@ namespace SistemaControleDeEstoque.Controllers
         // GET: Produtos
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Produto
-                                      .Include(p => p.Fornecedor)
-                                      .Include(p => p.Fornecedores);
-            return View(await applicationDbContext.ToListAsync());
+            var produtos = await _context.Produto
+                .Include(p => p.Fornecedor)
+                .Include(p => p.Fornecedores)
+                .ToListAsync();
+            return View(produtos);
         }
 
         // GET: Produtos/Details/5
@@ -51,23 +51,32 @@ namespace SistemaControleDeEstoque.Controllers
         public IActionResult Create()
         {
             ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "Nome");
-            return View();
+            return View(new ProdutoViewModel { Nome = string.Empty, Tipo = string.Empty });
         }
 
         // POST: Produtos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Gerente")]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Tipo,Quantidade,Valor,FornecedorId")] Produto produto)
+        public async Task<IActionResult> Create(ProdutoViewModel vm)
         {
             if (ModelState.IsValid)
             {
+                var produto = new Produto
+                {
+                    Nome = vm.Nome,
+                    Tipo = vm.Tipo,
+                    Quantidade = vm.Quantidade,
+                    Valor = vm.Valor,
+                    FornecedorId = vm.FornecedorId,
+                    EstoqueSeguranca = vm.EstoqueSeguranca
+                };
                 _context.Add(produto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "Nome", produto.FornecedorId);
-            return View(produto);
+            ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "Nome", vm.FornecedorId);
+            return View(vm);
         }
 
         // GET: Produtos/Edit/5
@@ -85,38 +94,60 @@ namespace SistemaControleDeEstoque.Controllers
                 return NotFound();
             }
 
-            // Obter todos os fornecedores associados a este produto
             var produtoFornecedores = await _context.ProdutoFornecedor
                 .Include(pf => pf.Fornecedor)
                 .Where(pf => pf.ProdutoId == id)
                 .ToListAsync();
 
-            // Obter todos os fornecedores disponíveis que ainda não estão associados a este produto
             var fornecedoresJaAssociados = produtoFornecedores.Select(pf => pf.FornecedorId).ToList();
             var fornecedoresDisponiveis = await _context.Fornecedor
                 .Where(f => !fornecedoresJaAssociados.Contains(f.Id))
                 .ToListAsync();
 
-            ViewBag.ProdutoFornecedores = produtoFornecedores;
-            ViewBag.FornecedoresDisponiveis = fornecedoresDisponiveis;
-            ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "Nome", produto.FornecedorId);
+            var vm = new ProdutoEditViewModel
+            {
+                Produto = new ProdutoViewModel
+                {
+                    Id = produto.Id,
+                    Nome = produto.Nome,
+                    Tipo = produto.Tipo,
+                    Quantidade = produto.Quantidade,
+                    Valor = produto.Valor,
+                    FornecedorId = produto.FornecedorId,
+                    EstoqueSeguranca = produto.EstoqueSeguranca
+                },
+                ProdutoFornecedores = produtoFornecedores,
+                FornecedoresDisponiveis = fornecedoresDisponiveis,
+                FornecedoresSelectList = new SelectList(_context.Fornecedor, "Id", "Nome", produto.FornecedorId)
+            };
 
-            return View(produto);
+            return View(vm);
         }
 
         // POST: Produtos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Gerente")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Tipo,Quantidade,Valor,FornecedorId")] Produto produto)
+        public async Task<IActionResult> Edit(int id, ProdutoViewModel vm)
         {
-            if (id != produto.Id)
+            if (id != vm.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                var produto = new Produto
+                {
+                    Id = vm.Id,
+                    Nome = vm.Nome,
+                    Tipo = vm.Tipo,
+                    Quantidade = vm.Quantidade,
+                    Valor = vm.Valor,
+                    FornecedorId = vm.FornecedorId,
+                    EstoqueSeguranca = vm.EstoqueSeguranca
+                };
+
                 try
                 {
                     _context.Update(produto);
@@ -124,7 +155,7 @@ namespace SistemaControleDeEstoque.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await ProdutoExistsAsync(produto.Id))
+                    if (!await ProdutoExistsAsync(vm.Id))
                     {
                         return NotFound();
                     }
@@ -135,8 +166,25 @@ namespace SistemaControleDeEstoque.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "Nome", produto.FornecedorId);
-            return View(produto);
+
+            // Recompor o ViewModel completo para reexibir a view com erros
+            var produtoFornecedores = await _context.ProdutoFornecedor
+                .Include(pf => pf.Fornecedor)
+                .Where(pf => pf.ProdutoId == id)
+                .ToListAsync();
+            var fornecedoresJaAssociados = produtoFornecedores.Select(pf => pf.FornecedorId).ToList();
+            var fornecedoresDisponiveis = await _context.Fornecedor
+                .Where(f => !fornecedoresJaAssociados.Contains(f.Id))
+                .ToListAsync();
+
+            var editVm = new ProdutoEditViewModel
+            {
+                Produto = vm,
+                ProdutoFornecedores = produtoFornecedores,
+                FornecedoresDisponiveis = fornecedoresDisponiveis,
+                FornecedoresSelectList = new SelectList(_context.Fornecedor, "Id", "Nome", vm.FornecedorId)
+            };
+            return View(editVm);
         }
 
         // GET: Produtos/Delete/5
@@ -167,12 +215,25 @@ namespace SistemaControleDeEstoque.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var produto = await _context.Produto.FindAsync(id);
-            if (produto != null)
+            if (produto == null)
             {
-                _context.Produto.Remove(produto);
+                return NotFound();
             }
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Produto.Remove(produto);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await ProdutoExistsAsync(id))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                throw;
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

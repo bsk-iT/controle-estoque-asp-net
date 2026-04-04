@@ -1,30 +1,24 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaControleDeEstoque.Data;
 using SistemaControleDeEstoque.Models;
+using SistemaControleDeEstoque.Models.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SistemaControleDeEstoque.Controllers
 {
     [Authorize]
-    public class MovimentacoesController : Controller
+    public class MovimentacoesController(
+        ApplicationDbContext context,
+        UserManager<IdentityUser> userManager) : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
-
-        public MovimentacoesController(
-            ApplicationDbContext context,
-            UserManager<IdentityUser> userManager)
-        {
-            _context = context;
-            _userManager = userManager;
-        }
+        private readonly ApplicationDbContext _context = context;
+        private readonly UserManager<IdentityUser> _userManager = userManager;
 
         // GET: Movimentacoes
         public async Task<IActionResult> Index()
@@ -66,7 +60,7 @@ namespace SistemaControleDeEstoque.Controllers
                 var userId = _userManager.GetUserId(User);
                 if (movimentacao.UsuarioId != userId)
                 {
-                    return NotFound(); // Retorna 404 em vez de 403 para não revelar que o registro existe
+                    return NotFound(); // 404 em vez de 403 para não revelar que o registro existe
                 }
             }
 
@@ -77,60 +71,71 @@ namespace SistemaControleDeEstoque.Controllers
         [Authorize(Policy = "RequireUserAdminGerenteRole")]
         public async Task<IActionResult> Create()
         {
-            ViewData["ProdutoId"] = new SelectList(_context.Produto, "Id", "Nome");
-
-            // Criar um dicionário com os IDs dos produtos e suas quantidades disponíveis
+            var user = await _userManager.GetUserAsync(User);
             var produtosQuantidades = await _context.Produto
                 .ToDictionaryAsync(p => p.Id, p => p.Quantidade);
-            ViewData["EstoqueProdutos"] = produtosQuantidades;
 
-            // Obter usuário atual
-            var user = await _userManager.GetUserAsync(User);
-
-            // Criar instância de movimentação com usuário preenchido
-            var movimentacao = new Movimentacao
+            var vm = new MovimentacaoCreateViewModel
             {
                 DataMovimentacao = DateTime.UtcNow,
-                UsuarioId = user?.Id,
-                UsuarioNome = user?.UserName ?? "Usuário não identificado"
+                UsuarioNome = user?.UserName ?? "Usuário não identificado",
+                EstoqueProdutos = produtosQuantidades
             };
 
-            return View(movimentacao);
+            ViewData["ProdutoId"] = new SelectList(_context.Produto, "Id", "Nome");
+            return View(vm);
         }
 
         // POST: Movimentacoes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "RequireUserAdminGerenteRole")]
-        public async Task<IActionResult> Create([Bind("Tipo,Quantidade,ProdutoId")] Movimentacao movimentacao)
+        public async Task<IActionResult> Create(MovimentacaoCreateViewModel vm)
         {
-            // Sempre sobrescrever usuário autenticado (previne overposting)
+            // Sempre sobrescrever dados de sistema (previne overposting)
             var user = await _userManager.GetUserAsync(User);
-            movimentacao.UsuarioId = user!.Id;
-            movimentacao.UsuarioNome = user.UserName;
-            movimentacao.DataMovimentacao = DateTime.UtcNow;
+            if (user == null) return Unauthorized();
 
             if (ModelState.IsValid)
             {
+                var movimentacao = new Movimentacao
+                {
+                    Tipo = vm.Tipo,
+                    Quantidade = vm.Quantidade,
+                    ProdutoId = vm.ProdutoId,
+                    UsuarioId = user.Id,
+                    UsuarioNome = user.UserName ?? user.Email ?? "Usuário não identificado",
+                    DataMovimentacao = DateTime.UtcNow
+                };
+
                 await using var transaction = await _context.Database.BeginTransactionAsync();
                 try
                 {
-                    // Validar e atualizar o estoque do produto dentro da mesma transação
                     if (movimentacao.ProdutoId.HasValue)
                     {
                         var produto = await _context.Produto.FindAsync(movimentacao.ProdutoId);
                         if (produto != null)
                         {
-                            if (movimentacao.Tipo == TipoMovimentacao.Saida)
+                        if (movimentacao.Tipo == TipoMovimentacao.Saida)
+                        {
+                            if (movimentacao.Quantidade > produto.Quantidade)
                             {
-                                if (movimentacao.Quantidade > produto.Quantidade)
-                                {
-                                    ModelState.AddModelError("Quantidade", $"Quantidade solicitada ({movimentacao.Quantidade}) excede o estoque disponível ({produto.Quantidade}).");
-                                    await transaction.RollbackAsync();
-                                    return await RecarregarViewCreate(movimentacao);
-                                }
-                                produto.Quantidade -= movimentacao.Quantidade;
+                                ModelState.AddModelError("Quantidade",
+                                    $"Quantidade solicitada ({movimentacao.Quantidade}) excede o estoque disponível ({produto.Quantidade}).");
+                                await transaction.RollbackAsync();
+                                return await RecarregarViewCreate(vm);
                             }
+                            produto.Quantidade -= movimentacao.Quantidade;
+
+                            // Verificar se estoque ficou abaixo do mínimo após a saída
+                            if (produto.Quantidade < produto.EstoqueSeguranca)
+                            {
+                                var deficit = produto.EstoqueSeguranca - produto.Quantidade;
+                                TempData["AlertaEstoque"] = $"⚠️ Atenção: {produto.Nome} está com estoque abaixo do mínimo. " +
+                                    $"Atual: {produto.Quantidade} un. | Mínimo: {produto.EstoqueSeguranca} un. | " +
+                                    $"Déficit: {deficit} un.";
+                            }
+                        }
                             else if (movimentacao.Tipo == TipoMovimentacao.Entrada)
                             {
                                 produto.Quantidade += movimentacao.Quantidade;
@@ -151,19 +156,18 @@ namespace SistemaControleDeEstoque.Controllers
                 }
             }
 
-            return await RecarregarViewCreate(movimentacao);
+            return await RecarregarViewCreate(vm);
         }
 
         /// <summary>
-        /// Recarrega os dados necessários para exibir a view de criação de movimentação.
+        /// Recarrega os dados de apoio para reexibir a view de criação com erros de validação.
         /// </summary>
-        private async Task<IActionResult> RecarregarViewCreate(Movimentacao movimentacao)
+        private async Task<IActionResult> RecarregarViewCreate(MovimentacaoCreateViewModel vm)
         {
-            ViewData["ProdutoId"] = new SelectList(_context.Produto, "Id", "Nome", movimentacao.ProdutoId);
-            var produtosQuantidades = await _context.Produto
+            vm.EstoqueProdutos = await _context.Produto
                 .ToDictionaryAsync(p => p.Id, p => p.Quantidade);
-            ViewData["EstoqueProdutos"] = produtosQuantidades;
-            return View(movimentacao);
+            ViewData["ProdutoId"] = new SelectList(_context.Produto, "Id", "Nome", vm.ProdutoId);
+            return View(vm);
         }
 
         // GET: Movimentacoes/Edit/5

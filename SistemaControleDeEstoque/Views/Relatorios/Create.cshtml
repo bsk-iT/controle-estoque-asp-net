@@ -1,4 +1,4 @@
-@model SistemaControleDeEstoque.Models.Relatorio
+@model SistemaControleDeEstoque.Models.ViewModels.RelatorioCreateViewModel
 
 @{
     ViewData["Title"] = "Novo Relatório";
@@ -51,7 +51,6 @@
                         </svg>
                         <span class="text-sm text-gray-700 dark:text-gray-300">@Model.UsuarioGerador</span>
                     </div>
-                    <input asp-for="UsuarioGerador" type="hidden" />
                     <p class="mt-1 text-xs text-gray-400 dark:text-gray-600">Preenchido automaticamente com o usuário logado.</p>
                 </div>
             </div>
