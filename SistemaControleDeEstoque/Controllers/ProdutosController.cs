@@ -48,9 +48,14 @@ namespace SistemaControleDeEstoque.Controllers
 
         // GET: Produtos/Create
         [Authorize(Roles = "Admin,Gerente")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "Nome");
+            ViewData["TiposProduto"] = await _context.Produto
+                .Select(p => p.Tipo)
+                .Distinct()
+                .OrderBy(t => t)
+                .ToListAsync();
             return View(new ProdutoViewModel { Nome = string.Empty, Tipo = string.Empty });
         }
 
@@ -65,7 +70,8 @@ namespace SistemaControleDeEstoque.Controllers
                 var produto = new Produto
                 {
                     Nome = vm.Nome,
-                    Tipo = vm.Tipo,
+                    Tipo = System.Globalization.CultureInfo.CurrentCulture.TextInfo
+                        .ToTitleCase(vm.Tipo.Trim().ToLower()),
                     Quantidade = vm.Quantidade,
                     Valor = vm.Valor,
                     FornecedorId = vm.FornecedorId,
@@ -76,6 +82,11 @@ namespace SistemaControleDeEstoque.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["FornecedorId"] = new SelectList(_context.Fornecedor, "Id", "Nome", vm.FornecedorId);
+            ViewData["TiposProduto"] = await _context.Produto
+                .Select(p => p.Tipo)
+                .Distinct()
+                .OrderBy(t => t)
+                .ToListAsync();
             return View(vm);
         }
 
@@ -121,6 +132,12 @@ namespace SistemaControleDeEstoque.Controllers
                 FornecedoresSelectList = new SelectList(_context.Fornecedor, "Id", "Nome", produto.FornecedorId)
             };
 
+            ViewData["TiposProduto"] = await _context.Produto
+                .Select(p => p.Tipo)
+                .Distinct()
+                .OrderBy(t => t)
+                .ToListAsync();
+
             return View(vm);
         }
 
@@ -141,7 +158,8 @@ namespace SistemaControleDeEstoque.Controllers
                 {
                     Id = vm.Id,
                     Nome = vm.Nome,
-                    Tipo = vm.Tipo,
+                    Tipo = System.Globalization.CultureInfo.CurrentCulture.TextInfo
+                        .ToTitleCase(vm.Tipo.Trim().ToLower()),
                     Quantidade = vm.Quantidade,
                     Valor = vm.Valor,
                     FornecedorId = vm.FornecedorId,
@@ -184,6 +202,13 @@ namespace SistemaControleDeEstoque.Controllers
                 FornecedoresDisponiveis = fornecedoresDisponiveis,
                 FornecedoresSelectList = new SelectList(_context.Fornecedor, "Id", "Nome", vm.FornecedorId)
             };
+            
+            ViewData["TiposProduto"] = await _context.Produto
+                .Select(p => p.Tipo)
+                .Distinct()
+                .OrderBy(t => t)
+                .ToListAsync();
+            
             return View(editVm);
         }
 
