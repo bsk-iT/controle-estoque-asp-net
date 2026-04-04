@@ -15,6 +15,7 @@ namespace SistemaControleDeEstoque.Controllers
         private readonly ApplicationDbContext _context = context;
 
         // GET: ProdutosFornecedores
+        [Authorize(Roles = "Admin,Gerente")]
         public async Task<IActionResult> Index()
         {
             var lista = await _context.ProdutoFornecedor
