@@ -137,6 +137,7 @@ namespace SistemaControleDeEstoque.Controllers
                         throw;
                     }
                 }
+                TempData["MensagemSucesso"] = $"Fornecedor \"{fornecedor.Nome}\" atualizado com sucesso.";
                 return RedirectToAction(nameof(Index));
             }
             return View(vm);
