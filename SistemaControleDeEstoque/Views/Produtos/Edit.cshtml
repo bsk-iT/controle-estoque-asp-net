@@ -65,13 +65,13 @@
                 <div>
                     <label asp-for="Produto.Valor"
                            class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5"></label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="text-gray-400 dark:text-gray-500 text-sm">R$</span>
-                        </div>
-                        <input asp-for="Produto.Valor"
-                               class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-colors duration-150" />
-                    </div>
+                     <div class="relative">
+                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                             <span class="text-gray-400 dark:text-gray-500 text-sm">R$</span>
+                         </div>
+                         <input asp-for="Produto.Valor" asp-format="{0:F2}"
+                                class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 text-gray-900 dark:text-white rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white transition-colors duration-150" />
+                     </div>
                     <span asp-validation-for="Produto.Valor" class="mt-1 text-xs text-red-600 dark:text-red-400"></span>
                 </div>
 

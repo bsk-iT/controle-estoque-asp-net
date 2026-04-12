@@ -7,6 +7,20 @@
 appsettings.Development.json
 appsettings.Production.json
 
+# Banco de dados SQLite local (gerado em tempo de execução)
+*.db
+*.db-shm
+*.db-wal
+
+# Configurações locais de editores
+.zed/
+
+# Sessões e checkpoints de ferramentas de IA (OpenCode)
+.opencode/
+
+# ASP.NET User Secrets (normalmente fora do projeto, mas por segurança)
+secrets.json
+
 # Arquivos de documentação de design e referência (não fazem parte do projeto)
 Documentação de Design - inventarii.md
 Design*.md

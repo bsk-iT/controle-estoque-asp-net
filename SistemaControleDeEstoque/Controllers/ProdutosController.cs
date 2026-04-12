@@ -145,9 +145,9 @@ namespace SistemaControleDeEstoque.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Gerente")]
-        public async Task<IActionResult> Edit(int id, ProdutoViewModel vm)
+        public async Task<IActionResult> Edit(int id, ProdutoEditViewModel vm)
         {
-            if (id != vm.Id)
+            if (id != vm.Produto.Id)
             {
                 return NotFound();
             }
@@ -156,14 +156,14 @@ namespace SistemaControleDeEstoque.Controllers
             {
                 var produto = new Produto
                 {
-                    Id = vm.Id,
-                    Nome = vm.Nome,
+                    Id = vm.Produto.Id,
+                    Nome = vm.Produto.Nome,
                     Tipo = System.Globalization.CultureInfo.CurrentCulture.TextInfo
-                        .ToTitleCase(vm.Tipo.Trim().ToLower()),
-                    Quantidade = vm.Quantidade,
-                    Valor = vm.Valor,
-                    FornecedorId = vm.FornecedorId,
-                    EstoqueSeguranca = vm.EstoqueSeguranca
+                        .ToTitleCase(vm.Produto.Tipo.Trim().ToLower()),
+                    Quantidade = vm.Produto.Quantidade,
+                    Valor = vm.Produto.Valor,
+                    FornecedorId = vm.Produto.FornecedorId,
+                    EstoqueSeguranca = vm.Produto.EstoqueSeguranca
                 };
 
                 try
@@ -173,7 +173,7 @@ namespace SistemaControleDeEstoque.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await ProdutoExistsAsync(vm.Id))
+                    if (!await ProdutoExistsAsync(vm.Produto.Id))
                     {
                         return NotFound();
                     }
@@ -182,6 +182,7 @@ namespace SistemaControleDeEstoque.Controllers
                         throw;
                     }
                 }
+                TempData["MensagemSucesso"] = $"Produto \"{produto.Nome}\" atualizado com sucesso.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -195,21 +196,17 @@ namespace SistemaControleDeEstoque.Controllers
                 .Where(f => !fornecedoresJaAssociados.Contains(f.Id))
                 .ToListAsync();
 
-            var editVm = new ProdutoEditViewModel
-            {
-                Produto = vm,
-                ProdutoFornecedores = produtoFornecedores,
-                FornecedoresDisponiveis = fornecedoresDisponiveis,
-                FornecedoresSelectList = new SelectList(_context.Fornecedor, "Id", "Nome", vm.FornecedorId)
-            };
-            
+            vm.ProdutoFornecedores = produtoFornecedores;
+            vm.FornecedoresDisponiveis = fornecedoresDisponiveis;
+            vm.FornecedoresSelectList = new SelectList(_context.Fornecedor, "Id", "Nome", vm.Produto.FornecedorId);
+
             ViewData["TiposProduto"] = await _context.Produto
                 .Select(p => p.Tipo)
                 .Distinct()
                 .OrderBy(t => t)
                 .ToListAsync();
-            
-            return View(editVm);
+
+            return View(vm);
         }
 
         // GET: Produtos/Delete/5
@@ -259,6 +256,7 @@ namespace SistemaControleDeEstoque.Controllers
                 throw;
             }
 
+            TempData["MensagemSucesso"] = $"Produto \"{produto.Nome}\" excluído com sucesso.";
             return RedirectToAction(nameof(Index));
         }
 

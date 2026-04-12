@@ -27,6 +27,7 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
+
     // Substituir o sistema de logging padrão pelo Serilog, lendo config do appsettings.json
     builder.Host.UseSerilog((context, services, configuration) => configuration
         .ReadFrom.Configuration(context.Configuration)

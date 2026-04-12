@@ -46,7 +46,6 @@ namespace SistemaControleDeEstoque.Models.ViewModels
         [Display(Name = "Valor")]
         [Required(ErrorMessage = "{0} é obrigatório")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Valor deve ser positivo")]
-        [DataType(DataType.Currency)]
         [Precision(18, 2)]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Valor { get; set; }
