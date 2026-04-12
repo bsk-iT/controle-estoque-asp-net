@@ -187,6 +187,7 @@ namespace SistemaControleDeEstoque.Controllers
                 throw;
             }
 
+            TempData["MensagemSucesso"] = $"Fornecedor \"{fornecedor.Nome}\" excluído com sucesso.";
             return RedirectToAction(nameof(Index));
         }
 
