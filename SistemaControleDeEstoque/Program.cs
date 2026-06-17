@@ -8,6 +8,7 @@ using SistemaControleDeEstoque.Data;
 using SistemaControleDeEstoque.Services;
 using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 
 // Garantir que a pasta logs/ existe antes de qualquer operação
 var logsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "logs");
@@ -26,6 +27,13 @@ Log.Information("Iniciando aplicação Sistema de Controle de Estoque...");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        options.KnownNetworks.Clear();
+        options.KnownProxies.Clear();
+    });
 
 
     // Substituir o sistema de logging padrão pelo Serilog, lendo config do appsettings.json
@@ -91,7 +99,7 @@ try
         options.AccessDeniedPath = "/Identity/Account/AccessDenied";
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Cookie.SameSite = SameSiteMode.Lax;
         options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
         options.SlidingExpiration = true;
     });
@@ -136,6 +144,8 @@ try
         }
     }
 
+    app.UseForwardedHeaders();
+
     if (app.Environment.IsDevelopment())
     {
         app.UseMigrationsEndPoint();
@@ -143,7 +153,7 @@ try
     else
     {
         app.UseExceptionHandler("/Home/Error");
-        app.UseHsts();
+        // app.UseHsts();
     }
 
     // Middleware de logging de requisições HTTP (Serilog)
@@ -154,7 +164,7 @@ try
 
     app.UseRequestLocalization();
 
-    app.UseHttpsRedirection();
+    // app.UseHttpsRedirection();
     app.UseStaticFiles();
 
     app.UseRouting();
