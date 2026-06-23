@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 namespace SistemaControleDeEstoque.Services
 {
     /// <summary>
-    /// Implementação de <see cref="IEmailSender"/> usando MailKit com SMTP do Gmail.
+    /// Implementação de <see cref="IEmailSender"/> usando MailKit/SMTP.
     /// Configure as credenciais via User Secrets (desenvolvimento) ou variáveis de ambiente (produção):
-    ///   dotnet user-secrets set "Smtp:Password" "xxxx xxxx xxxx xxxx"
+    ///   Smtp:Host, Smtp:Port, Smtp:Username, Smtp:Password, Smtp:FromAddress, Smtp:FromName
     /// </summary>
     public class EmailSender : IEmailSender
     {
@@ -31,6 +31,7 @@ namespace SistemaControleDeEstoque.Services
                 ?? throw new InvalidOperationException("Configuração 'Smtp:FromAddress' não encontrada.");
             var fromName = _configuration["Smtp:FromName"]
                 ?? throw new InvalidOperationException("Configuração 'Smtp:FromName' não encontrada.");
+            var username = _configuration["Smtp:Username"] ?? fromAddress;
             var password = _configuration["Smtp:Password"]
                 ?? throw new InvalidOperationException("Configuração 'Smtp:Password' não encontrada.");
 
@@ -38,7 +39,7 @@ namespace SistemaControleDeEstoque.Services
             try
             {
                 await client.ConnectAsync(host, port, MailKit.Security.SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync(fromAddress, password);
+                await client.AuthenticateAsync(username, password);
 
                 var message = new MimeMessage();
                 message.From.Add(new MailboxAddress(fromName, fromAddress));
